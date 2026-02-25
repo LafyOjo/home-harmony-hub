@@ -347,6 +347,39 @@ export type Database = {
           },
         ]
       }
+      listing_tenants: {
+        Row: {
+          added_by: string
+          created_at: string | null
+          id: string
+          listing_id: string
+          tenant_email: string | null
+          tenant_name: string
+          tenant_user_id: string | null
+          verification_status: string
+        }
+        Insert: {
+          added_by: string
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          tenant_email?: string | null
+          tenant_name: string
+          tenant_user_id?: string | null
+          verification_status?: string
+        }
+        Update: {
+          added_by?: string
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          tenant_email?: string | null
+          tenant_name?: string
+          tenant_user_id?: string | null
+          verification_status?: string
+        }
+        Relationships: []
+      }
       listings: {
         Row: {
           address: string
