@@ -4,21 +4,31 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Home, User, FileText, Send, Inbox, Building2, List, LogOut, Bell, Menu, X,
+  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users,
 } from "lucide-react";
 import { useState } from "react";
 
 const tenantNav = [
   { to: "/dashboard", icon: Home, label: "Home" },
+  { to: "/dashboard/tenancy", icon: PoundSterling, label: "My Tenancy" },
+  { to: "/dashboard/utilities", icon: Zap, label: "Utilities" },
+  { to: "/dashboard/complaints", icon: MessageSquare, label: "Complaints" },
+  { to: "/dashboard/maintenance", icon: Wrench, label: "Maintenance" },
+  { to: "/dashboard/contracts", icon: FileSignature, label: "Contracts" },
   { to: "/dashboard/profile", icon: User, label: "Profile" },
   { to: "/dashboard/documents", icon: FileText, label: "Documents" },
   { to: "/dashboard/references", icon: Send, label: "References" },
   { to: "/dashboard/applications", icon: Inbox, label: "Applications" },
+  { to: "/dashboard/verification", icon: ShieldCheck, label: "Verification" },
 ];
 
 const landlordNav = [
   { to: "/dashboard", icon: Home, label: "Home" },
+  { to: "/dashboard/tenancies", icon: Users, label: "Tenancies" },
   { to: "/dashboard/listings", icon: Building2, label: "Listings" },
   { to: "/dashboard/pipeline", icon: List, label: "Pipeline" },
+  { to: "/dashboard/workers", icon: Wrench, label: "Workers" },
+  { to: "/dashboard/landlord-verification", icon: ShieldCheck, label: "Verification" },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -41,7 +51,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <Link to="/" className="font-display text-xl font-bold text-primary mb-8">
           TenantVault
         </Link>
-        <nav className="flex-1 space-y-1">
+        <nav className="flex-1 space-y-1 overflow-y-auto">
           {nav.map((item) => {
             const active = location.pathname === item.to;
             return (
@@ -85,7 +95,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {/* Mobile nav overlay */}
         {mobileOpen && (
           <div className="lg:hidden fixed inset-0 z-50 bg-background/95 backdrop-blur-sm pt-14">
-            <nav className="p-4 space-y-1">
+            <nav className="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-3.5rem)]">
               {nav.map((item) => {
                 const active = location.pathname === item.to;
                 return (

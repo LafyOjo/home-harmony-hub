@@ -1,9 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { User, FileText, Send, Inbox, ArrowRight } from "lucide-react";
+import { User, FileText, Send, Inbox, ArrowRight, PoundSterling, Zap, Wrench, ShieldCheck } from "lucide-react";
 
 const quickActions = [
+  { to: "/dashboard/tenancy", icon: PoundSterling, label: "My Tenancy", desc: "Rent, payments & balance" },
+  { to: "/dashboard/utilities", icon: Zap, label: "Utilities", desc: "Bills & utility payments" },
+  { to: "/dashboard/maintenance", icon: Wrench, label: "Maintenance", desc: "Report & track repairs" },
+  { to: "/dashboard/verification", icon: ShieldCheck, label: "Verification", desc: "Verify your identity" },
   { to: "/dashboard/profile", icon: User, label: "Complete Profile", desc: "Fill in your details" },
   { to: "/dashboard/documents", icon: FileText, label: "Upload Documents", desc: "ID, payslips & more" },
   { to: "/dashboard/references", icon: Send, label: "Request References", desc: "Employer & landlord" },
@@ -20,7 +24,6 @@ export default function TenantHome() {
         <p className="text-muted-foreground mb-8">{user?.email}</p>
       </motion.div>
 
-      {/* Profile completeness placeholder */}
       <div className="bg-card border border-border rounded-xl p-5 mb-8">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium">Profile Completeness</span>
@@ -32,16 +35,10 @@ export default function TenantHome() {
         <p className="text-xs text-muted-foreground mt-2">Complete your profile to generate your Tenant Pack</p>
       </div>
 
-      {/* Quick actions */}
       <h2 className="font-display text-lg font-semibold mb-4">Quick Actions</h2>
       <div className="grid sm:grid-cols-2 gap-4">
         {quickActions.map((action, i) => (
-          <motion.div
-            key={action.to}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-          >
+          <motion.div key={action.to} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
             <Link
               to={action.to}
               className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors group"

@@ -1,8 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Building2, List, Plus, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Building2, List, Plus, ArrowRight, Users, Wrench, ShieldCheck } from "lucide-react";
 
 export default function LandlordHome() {
   const { user } = useAuth();
@@ -18,7 +17,7 @@ export default function LandlordHome() {
         {[
           { label: "Active Listings", value: "—", color: "text-primary" },
           { label: "Total Applicants", value: "—", color: "text-accent" },
-          { label: "Pending Review", value: "—", color: "text-warning" },
+          { label: "Active Tenancies", value: "—", color: "text-success" },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-5">
             <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -27,36 +26,30 @@ export default function LandlordHome() {
         ))}
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <h2 className="font-display text-lg font-semibold">Quick Actions</h2>
-      </div>
+      <h2 className="font-display text-lg font-semibold mb-4">Quick Actions</h2>
       <div className="grid sm:grid-cols-2 gap-4">
-        <Link
-          to="/dashboard/listings/new"
-          className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors group"
-        >
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Plus className="w-5 h-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <p className="font-medium text-sm">Create Listing</p>
-            <p className="text-xs text-muted-foreground">Add a new property</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-        </Link>
-        <Link
-          to="/dashboard/pipeline"
-          className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors group"
-        >
-          <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-            <List className="w-5 h-5 text-accent" />
-          </div>
-          <div className="flex-1">
-            <p className="font-medium text-sm">View Pipeline</p>
-            <p className="text-xs text-muted-foreground">Review applicants</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-        </Link>
+        {[
+          { to: "/dashboard/listings/new", icon: Plus, label: "Create Listing", desc: "Add a new property", color: "bg-primary/10 text-primary" },
+          { to: "/dashboard/pipeline", icon: List, label: "View Pipeline", desc: "Review applicants", color: "bg-accent/20 text-accent" },
+          { to: "/dashboard/tenancies", icon: Users, label: "Manage Tenancies", desc: "Payments, utilities & more", color: "bg-success/10 text-success" },
+          { to: "/dashboard/workers", icon: Wrench, label: "Workers & Fixers", desc: "Manage maintenance team", color: "bg-muted text-muted-foreground" },
+          { to: "/dashboard/landlord-verification", icon: ShieldCheck, label: "Verification", desc: "Verify ID & properties", color: "bg-primary/10 text-primary" },
+        ].map((action) => (
+          <Link
+            key={action.to}
+            to={action.to}
+            className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors group"
+          >
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${action.color}`}>
+              <action.icon className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-sm">{action.label}</p>
+              <p className="text-xs text-muted-foreground">{action.desc}</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          </Link>
+        ))}
       </div>
     </div>
   );
