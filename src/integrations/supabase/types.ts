@@ -92,6 +92,62 @@ export type Database = {
         }
         Relationships: []
       }
+      complaints: {
+        Row: {
+          attachments: Json | null
+          category: string
+          created_at: string | null
+          description: string
+          id: string
+          priority: string
+          resolved_at: string | null
+          response: string | null
+          status: string
+          subject: string
+          submitted_by: string
+          tenancy_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          category: string
+          created_at?: string | null
+          description: string
+          id?: string
+          priority?: string
+          resolved_at?: string | null
+          response?: string | null
+          status?: string
+          subject: string
+          submitted_by: string
+          tenancy_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          category?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          priority?: string
+          resolved_at?: string | null
+          response?: string | null
+          status?: string
+          subject?: string
+          submitted_by?: string
+          tenancy_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaints_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consents: {
         Row: {
           accepted_at: string | null
@@ -115,6 +171,62 @@ export type Database = {
           version?: string
         }
         Relationships: []
+      }
+      contracts: {
+        Row: {
+          contract_type: string
+          created_at: string | null
+          id: string
+          landlord_signed_at: string | null
+          notes: string | null
+          status: string
+          storage_key: string | null
+          tenancy_id: string
+          tenant_signed_at: string | null
+          title: string
+          updated_at: string | null
+          valid_from: string | null
+          valid_to: string | null
+        }
+        Insert: {
+          contract_type?: string
+          created_at?: string | null
+          id?: string
+          landlord_signed_at?: string | null
+          notes?: string | null
+          status?: string
+          storage_key?: string | null
+          tenancy_id: string
+          tenant_signed_at?: string | null
+          title: string
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Update: {
+          contract_type?: string
+          created_at?: string | null
+          id?: string
+          landlord_signed_at?: string | null
+          notes?: string | null
+          status?: string
+          storage_key?: string | null
+          tenancy_id?: string
+          tenant_signed_at?: string | null
+          title?: string
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       documents: {
         Row: {
@@ -277,6 +389,111 @@ export type Database = {
           rent_pcm?: number
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      maintenance_requests: {
+        Row: {
+          assigned_worker_id: string | null
+          category: string
+          completed_at: string | null
+          completion_notes: string | null
+          created_at: string | null
+          description: string
+          id: string
+          photos: Json | null
+          priority: string
+          scheduled_date: string | null
+          scheduled_time_window: string | null
+          status: string
+          submitted_by: string
+          tenancy_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_worker_id?: string | null
+          category?: string
+          completed_at?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          description: string
+          id?: string
+          photos?: Json | null
+          priority?: string
+          scheduled_date?: string | null
+          scheduled_time_window?: string | null
+          status?: string
+          submitted_by: string
+          tenancy_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_worker_id?: string | null
+          category?: string
+          completed_at?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          photos?: Json | null
+          priority?: string
+          scheduled_date?: string | null
+          scheduled_time_window?: string | null
+          status?: string
+          submitted_by?: string
+          tenancy_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_requests_assigned_worker_id_fkey"
+            columns: ["assigned_worker_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_workers: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          landlord_id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          specialty: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          landlord_id: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          specialty?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          landlord_id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          specialty?: string | null
         }
         Relationships: []
       }
@@ -475,6 +692,101 @@ export type Database = {
           },
         ]
       }
+      rent_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          due_date: string
+          id: string
+          paid_amount: number | null
+          paid_date: string | null
+          payment_method: string | null
+          reference: string | null
+          status: string
+          tenancy_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          due_date: string
+          id?: string
+          paid_amount?: number | null
+          paid_date?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          status?: string
+          tenancy_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          due_date?: string
+          id?: string
+          paid_amount?: number | null
+          paid_date?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          status?: string
+          tenancy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_payments_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenancies: {
+        Row: {
+          application_id: string | null
+          contract_storage_key: string | null
+          created_at: string | null
+          deposit: number | null
+          end_date: string
+          id: string
+          landlord_id: string
+          listing_id: string
+          rent_pcm: number
+          start_date: string
+          status: string
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          contract_storage_key?: string | null
+          created_at?: string | null
+          deposit?: number | null
+          end_date: string
+          id?: string
+          landlord_id: string
+          listing_id: string
+          rent_pcm: number
+          start_date: string
+          status?: string
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          contract_storage_key?: string | null
+          created_at?: string | null
+          deposit?: number | null
+          end_date?: string
+          id?: string
+          landlord_id?: string
+          listing_id?: string
+          rent_pcm?: number
+          start_date?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       tenant_addresses: {
         Row: {
           address_line_1: string
@@ -559,6 +871,98 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      utilities: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          due_date: string | null
+          id: string
+          notes: string | null
+          provider_name: string | null
+          responsibility: string
+          status: string
+          tenancy_id: string
+          updated_at: string | null
+          utility_type: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          provider_name?: string | null
+          responsibility?: string
+          status?: string
+          tenancy_id: string
+          updated_at?: string | null
+          utility_type: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          provider_name?: string | null
+          responsibility?: string
+          status?: string
+          tenancy_id?: string
+          updated_at?: string | null
+          utility_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utilities_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_requests: {
+        Row: {
+          created_at: string | null
+          document_ids: Json | null
+          id: string
+          listing_id: string | null
+          notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+          verification_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          document_ids?: Json | null
+          id?: string
+          listing_id?: string | null
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+          verification_type: string
+        }
+        Update: {
+          created_at?: string | null
+          document_ids?: Json | null
+          id?: string
+          listing_id?: string | null
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+          verification_type?: string
         }
         Relationships: []
       }

@@ -14,14 +14,28 @@ import TenantProfile from "./pages/dashboard/TenantProfile";
 import TenantDocuments from "./pages/dashboard/TenantDocuments";
 import TenantReferences from "./pages/dashboard/TenantReferences";
 import TenantApplications from "./pages/dashboard/TenantApplications";
+import TenantTenancy from "./pages/dashboard/TenantTenancy";
+import TenantUtilities from "./pages/dashboard/TenantUtilities";
+import TenantComplaints from "./pages/dashboard/TenantComplaints";
+import TenantMaintenance from "./pages/dashboard/TenantMaintenance";
+import TenantContracts from "./pages/dashboard/TenantContracts";
+import TenantVerification from "./pages/dashboard/TenantVerification";
 import Listings from "./pages/dashboard/Listings";
 import NewListing from "./pages/dashboard/NewListing";
 import ListingDetail from "./pages/dashboard/ListingDetail";
 import Pipeline from "./pages/dashboard/Pipeline";
+import LandlordTenancies from "./pages/dashboard/LandlordTenancies";
+import LandlordTenancyDetail from "./pages/dashboard/LandlordTenancyDetail";
+import LandlordWorkers from "./pages/dashboard/LandlordWorkers";
+import LandlordVerification from "./pages/dashboard/LandlordVerification";
 import Apply from "./pages/Apply";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const P = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><DashboardLayout>{children}</DashboardLayout></ProtectedRoute>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -35,15 +49,27 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/apply/:token" element={<Apply />} />
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><DashboardHome /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/profile" element={<ProtectedRoute><DashboardLayout><TenantProfile /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/documents" element={<ProtectedRoute><DashboardLayout><TenantDocuments /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/references" element={<ProtectedRoute><DashboardLayout><TenantReferences /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/applications" element={<ProtectedRoute><DashboardLayout><TenantApplications /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/listings" element={<ProtectedRoute><DashboardLayout><Listings /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/listings/new" element={<ProtectedRoute><DashboardLayout><NewListing /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/listings/:id" element={<ProtectedRoute><DashboardLayout><ListingDetail /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/pipeline" element={<ProtectedRoute><DashboardLayout><Pipeline /></DashboardLayout></ProtectedRoute>} />
+            {/* Tenant routes */}
+            <Route path="/dashboard" element={<P><DashboardHome /></P>} />
+            <Route path="/dashboard/profile" element={<P><TenantProfile /></P>} />
+            <Route path="/dashboard/documents" element={<P><TenantDocuments /></P>} />
+            <Route path="/dashboard/references" element={<P><TenantReferences /></P>} />
+            <Route path="/dashboard/applications" element={<P><TenantApplications /></P>} />
+            <Route path="/dashboard/tenancy" element={<P><TenantTenancy /></P>} />
+            <Route path="/dashboard/utilities" element={<P><TenantUtilities /></P>} />
+            <Route path="/dashboard/complaints" element={<P><TenantComplaints /></P>} />
+            <Route path="/dashboard/maintenance" element={<P><TenantMaintenance /></P>} />
+            <Route path="/dashboard/contracts" element={<P><TenantContracts /></P>} />
+            <Route path="/dashboard/verification" element={<P><TenantVerification /></P>} />
+            {/* Landlord routes */}
+            <Route path="/dashboard/listings" element={<P><Listings /></P>} />
+            <Route path="/dashboard/listings/new" element={<P><NewListing /></P>} />
+            <Route path="/dashboard/listings/:id" element={<P><ListingDetail /></P>} />
+            <Route path="/dashboard/pipeline" element={<P><Pipeline /></P>} />
+            <Route path="/dashboard/tenancies" element={<P><LandlordTenancies /></P>} />
+            <Route path="/dashboard/tenancies/:id" element={<P><LandlordTenancyDetail /></P>} />
+            <Route path="/dashboard/workers" element={<P><LandlordWorkers /></P>} />
+            <Route path="/dashboard/landlord-verification" element={<P><LandlordVerification /></P>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
