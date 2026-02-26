@@ -160,6 +160,20 @@ export default function LandlordTenancyDetail() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tenancy-maintenance"] }),
   });
 
+  // Update maintenance status / scheduling
+  const updateMaintenanceMutation = useMutation({
+    mutationFn: async ({ requestId, status, scheduled_date, scheduled_time_window, completion_notes }: { requestId: string; status: string; scheduled_date?: string; scheduled_time_window?: string; completion_notes?: string }) => {
+      const update: any = { status };
+      if (scheduled_date) update.scheduled_date = scheduled_date;
+      if (scheduled_time_window) update.scheduled_time_window = scheduled_time_window;
+      if (completion_notes) update.completion_notes = completion_notes;
+      if (status === "completed") update.completed_at = new Date().toISOString();
+      const { error } = await supabase.from("maintenance_requests").update(update).eq("id", requestId);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tenancy-maintenance"] }),
+  });
+
   // Add contract - enhanced with lease generation and upload
   const [contractOpen, setContractOpen] = useState(false);
   const [contractTitle, setContractTitle] = useState("");
@@ -451,23 +465,13 @@ This agreement is governed by the laws of England and Wales.`;
         {/* MAINTENANCE TAB */}
         <TabsContent value="maintenance" className="space-y-4 mt-4">
           {maintenance?.map(m => (
-            <Card key={m.id} className="p-4">
-              <div className="flex justify-between mb-2">
-                <div>
-                  <p className="font-medium">{m.title}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{m.category} · {m.priority} · {format(parseISO(m.created_at!), "d MMM")}</p>
-                </div>
-                <Badge className={m.status === "completed" ? "bg-success text-success-foreground" : "bg-muted text-muted-foreground"}>{m.status.replace("_"," ")}</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground mb-2">{m.description}</p>
-              {m.status !== "completed" && m.status !== "closed" && workers && workers.length > 0 && (
-                <Select onValueChange={(wId) => assignWorkerMutation.mutate({ requestId: m.id, workerId: wId })}>
-                  <SelectTrigger className="w-64"><SelectValue placeholder="Assign worker..." /></SelectTrigger>
-                  <SelectContent>{workers.map(w => <SelectItem key={w.id} value={w.id}>{w.name} ({w.specialty})</SelectItem>)}</SelectContent>
-                </Select>
-              )}
-              {m.maintenance_workers && <p className="text-sm mt-1">Assigned: <strong>{(m.maintenance_workers as any).name}</strong></p>}
-            </Card>
+            <MaintenanceCard
+              key={m.id}
+              request={m}
+              workers={workers || []}
+              onAssign={(workerId) => assignWorkerMutation.mutate({ requestId: m.id, workerId })}
+              onUpdateStatus={(status, extras) => updateMaintenanceMutation.mutate({ requestId: m.id, status, ...extras })}
+            />
           ))}
           {(!maintenance || maintenance.length === 0) && <p className="text-center text-sm text-muted-foreground py-4">No maintenance requests.</p>}
         </TabsContent>
@@ -728,6 +732,123 @@ function ComplaintCard({ complaint, onRespond }: { complaint: any; onRespond: (r
             <Button size="sm" variant="outline" className="mt-2" onClick={() => setShowResponse(true)}>Respond</Button>
           )}
         </>
+      )}
+    </Card>
+  );
+}
+
+function MaintenanceCard({ request, workers, onAssign, onUpdateStatus }: {
+  request: any;
+  workers: any[];
+  onAssign: (workerId: string) => void;
+  onUpdateStatus: (status: string, extras?: { scheduled_date?: string; scheduled_time_window?: string; completion_notes?: string }) => void;
+}) {
+  const [showSchedule, setShowSchedule] = useState(false);
+  const [schedDate, setSchedDate] = useState(request.scheduled_date || "");
+  const [schedWindow, setSchedWindow] = useState(request.scheduled_time_window || "");
+  const [showComplete, setShowComplete] = useState(false);
+  const [completionNotes, setCompletionNotes] = useState("");
+
+  const photos = request.photos as string[] | null;
+  const prefSlots = (request as any).preferred_time_slots as { slots?: string[]; preferred_date?: string } | null;
+  const isOpen = request.status !== "completed" && request.status !== "closed";
+
+  return (
+    <Card className="p-4">
+      <div className="flex justify-between mb-2">
+        <div>
+          <p className="font-medium">{request.title}</p>
+          <p className="text-xs text-muted-foreground capitalize">{request.category} · {request.priority} · {format(parseISO(request.created_at!), "d MMM")}</p>
+        </div>
+        <Badge className={request.status === "completed" ? "bg-success text-success-foreground" : request.status === "in_progress" || request.status === "scheduled" ? "bg-warning text-warning-foreground" : "bg-muted text-muted-foreground"}>
+          {request.status.replace("_", " ")}
+        </Badge>
+      </div>
+      <p className="text-sm text-muted-foreground mb-2">{request.description}</p>
+
+      {/* Photos */}
+      {photos && photos.length > 0 && (
+        <div className="flex gap-2 mb-3 overflow-x-auto">
+          {photos.map((url, i) => (
+            <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+              <img src={url} alt="" className="w-16 h-16 object-cover rounded-lg border border-border flex-shrink-0" />
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* Tenant preferred times */}
+      {prefSlots && (prefSlots.slots?.length || prefSlots.preferred_date) && (
+        <div className="bg-muted/50 p-2 rounded-lg mb-3">
+          <p className="text-xs font-medium mb-1">Tenant Availability</p>
+          <div className="flex flex-wrap gap-1">
+            {prefSlots.slots?.map(s => <Badge key={s} variant="outline" className="text-[10px]">{s}</Badge>)}
+          </div>
+          {prefSlots.preferred_date && <p className="text-xs text-muted-foreground mt-1">Preferred: {format(parseISO(prefSlots.preferred_date), "d MMM yyyy")}</p>}
+        </div>
+      )}
+
+      {/* Assigned worker */}
+      {request.maintenance_workers && <p className="text-sm mb-2">Assigned: <strong>{(request.maintenance_workers as any).name}</strong> {(request.maintenance_workers as any).phone && `· ${(request.maintenance_workers as any).phone}`}</p>}
+
+      {/* Scheduled info */}
+      {request.scheduled_date && (
+        <p className="text-sm text-muted-foreground mb-2">
+          📅 Scheduled: {format(parseISO(request.scheduled_date), "d MMM yyyy")} {request.scheduled_time_window && `(${request.scheduled_time_window})`}
+        </p>
+      )}
+
+      {/* Completion notes */}
+      {request.completion_notes && (
+        <div className="p-2 bg-success/5 rounded-lg text-sm mb-2">
+          <span className="font-medium">Completed: </span>{request.completion_notes}
+        </div>
+      )}
+
+      {/* Actions */}
+      {isOpen && (
+        <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-border">
+          {/* Assign worker */}
+          {workers.length > 0 && (
+            <Select onValueChange={onAssign} value={request.assigned_worker_id || undefined}>
+              <SelectTrigger className="w-48 h-8 text-xs"><SelectValue placeholder="Assign worker..." /></SelectTrigger>
+              <SelectContent>{workers.map(w => <SelectItem key={w.id} value={w.id}>{w.name} ({w.specialty})</SelectItem>)}</SelectContent>
+            </Select>
+          )}
+
+          {/* Schedule */}
+          {!showSchedule ? (
+            <Button size="sm" variant="outline" className="text-xs h-8" onClick={() => setShowSchedule(true)}>Schedule</Button>
+          ) : (
+            <div className="flex items-center gap-2 w-full">
+              <Input type="date" value={schedDate} onChange={e => setSchedDate(e.target.value)} className="h-8 text-xs w-36" />
+              <Select value={schedWindow} onValueChange={setSchedWindow}>
+                <SelectTrigger className="h-8 text-xs w-40"><SelectValue placeholder="Time window" /></SelectTrigger>
+                <SelectContent>
+                  {["morning (8-12)", "afternoon (12-5)", "evening (5-8)"].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button size="sm" className="h-8 text-xs" disabled={!schedDate} onClick={() => {
+                onUpdateStatus("scheduled", { scheduled_date: schedDate, scheduled_time_window: schedWindow });
+                setShowSchedule(false);
+              }}>Confirm</Button>
+            </div>
+          )}
+
+          {/* Status updates */}
+          <Button size="sm" variant="outline" className="text-xs h-8" onClick={() => onUpdateStatus("in_progress")}>In Progress</Button>
+          {!showComplete ? (
+            <Button size="sm" variant="default" className="text-xs h-8" onClick={() => setShowComplete(true)}>Complete</Button>
+          ) : (
+            <div className="flex items-center gap-2 w-full mt-2">
+              <Input value={completionNotes} onChange={e => setCompletionNotes(e.target.value)} placeholder="Completion notes..." className="h-8 text-xs flex-1" />
+              <Button size="sm" className="h-8 text-xs" onClick={() => {
+                onUpdateStatus("completed", { completion_notes: completionNotes });
+                setShowComplete(false);
+              }}>Done</Button>
+            </div>
+          )}
+        </div>
       )}
     </Card>
   );

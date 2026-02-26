@@ -583,6 +583,7 @@ export type Database = {
           description: string
           id: string
           photos: Json | null
+          preferred_time_slots: Json | null
           priority: string
           scheduled_date: string | null
           scheduled_time_window: string | null
@@ -601,6 +602,7 @@ export type Database = {
           description: string
           id?: string
           photos?: Json | null
+          preferred_time_slots?: Json | null
           priority?: string
           scheduled_date?: string | null
           scheduled_time_window?: string | null
@@ -619,6 +621,7 @@ export type Database = {
           description?: string
           id?: string
           photos?: Json | null
+          preferred_time_slots?: Json | null
           priority?: string
           scheduled_date?: string | null
           scheduled_time_window?: string | null
