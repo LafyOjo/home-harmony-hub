@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import ScreeningResults from "@/components/ScreeningResults";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const columns = [
   { status: "submitted", label: "Submitted", color: "bg-primary/10 text-primary" },
@@ -28,10 +30,10 @@ export default function Pipeline() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [apps, setApps] = useState<AppWithProfile[]>([]);
+  const [expandedApp, setExpandedApp] = useState<string | null>(null);
 
   const fetchApps = async () => {
     if (!user) return;
-    // Get listings owned by this user, then their applications
     const { data: listings } = await supabase.from("listings").select("id").eq("owner_id", user.id);
     if (!listings?.length) return;
     const listingIds = listings.map(l => l.id);
@@ -44,7 +46,6 @@ export default function Pipeline() {
 
     if (!data) return;
 
-    // Fetch tenant profiles
     const tenantIds = [...new Set(data.map(a => a.tenant_id))];
     const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, email").in("user_id", tenantIds);
     const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
@@ -82,25 +83,58 @@ export default function Pipeline() {
                   <span className="text-xs text-muted-foreground">{colApps.length}</span>
                 </div>
                 <div className="space-y-2">
-                  {colApps.map(app => (
-                    <div key={app.id} className="bg-card border border-border rounded-lg p-3">
-                      <p className="text-sm font-medium">{app.profiles?.full_name || app.profiles?.email || "Tenant"}</p>
-                      <p className="text-xs text-muted-foreground">{app.listings?.title}</p>
-                      <div className="flex gap-1 mt-2 flex-wrap">
-                        {columns.map(c => c.status !== app.status && (
-                          <Button
-                            key={c.status}
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 text-xs px-2"
-                            onClick={() => moveStatus(app.id, c.status)}
-                          >
-                            → {c.label}
-                          </Button>
-                        ))}
+                  {colApps.map(app => {
+                    const isExpanded = expandedApp === app.id;
+                    return (
+                      <div key={app.id} className="bg-card border border-border rounded-lg p-3 space-y-2">
+                        <div
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => setExpandedApp(isExpanded ? null : app.id)}
+                        >
+                          <div>
+                            <p className="text-sm font-medium">{app.profiles?.full_name || app.profiles?.email || "Tenant"}</p>
+                            <p className="text-xs text-muted-foreground">{app.listings?.title}</p>
+                          </div>
+                          {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                        </div>
+
+                        {isExpanded && (
+                          <div className="space-y-3 pt-2 border-t border-border">
+                            <ScreeningResults applicationId={app.id} canTrigger />
+                            <div className="flex gap-1 flex-wrap">
+                              {columns.map(c => c.status !== app.status && (
+                                <Button
+                                  key={c.status}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 text-xs px-2"
+                                  onClick={(e) => { e.stopPropagation(); moveStatus(app.id, c.status); }}
+                                >
+                                  → {c.label}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {!isExpanded && (
+                          <div className="flex gap-1 flex-wrap">
+                            {columns.map(c => c.status !== app.status && (
+                              <Button
+                                key={c.status}
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 text-xs px-2"
+                                onClick={() => moveStatus(app.id, c.status)}
+                              >
+                                → {c.label}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
