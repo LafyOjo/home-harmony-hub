@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Home, User, FileText, Send, Inbox, Building2, List, LogOut, Menu, X,
-  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText,
+  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText, BarChart3,
 } from "lucide-react";
 import { useState } from "react";
 import NotificationBell from "@/components/NotificationBell";
@@ -17,6 +17,7 @@ const tenantNav = [
   { to: "/dashboard/maintenance", icon: Wrench, label: "Maintenance" },
   { to: "/dashboard/contracts", icon: FileSignature, label: "Contracts" },
   { to: "/dashboard/policies", icon: ScrollText, label: "Policies" },
+  { to: "/dashboard/accounting", icon: BarChart3, label: "Accounting" },
   { to: "/dashboard/profile", icon: User, label: "Profile" },
   { to: "/dashboard/references", icon: Send, label: "References" },
   { to: "/dashboard/applications", icon: Inbox, label: "Applications" },
@@ -28,6 +29,7 @@ const landlordNav = [
   { to: "/dashboard/tenancies", icon: Users, label: "Tenancies" },
   { to: "/dashboard/listings", icon: Building2, label: "Listings" },
   { to: "/dashboard/pipeline", icon: List, label: "Pipeline" },
+  { to: "/dashboard/accounting", icon: BarChart3, label: "Accounting" },
   { to: "/dashboard/workers", icon: Wrench, label: "Workers" },
   { to: "/dashboard/landlord-verification", icon: ShieldCheck, label: "Verification" },
 ];

@@ -29,6 +29,8 @@ import LandlordTenancies from "./pages/dashboard/LandlordTenancies";
 import LandlordTenancyDetail from "./pages/dashboard/LandlordTenancyDetail";
 import LandlordWorkers from "./pages/dashboard/LandlordWorkers";
 import LandlordVerification from "./pages/dashboard/LandlordVerification";
+import LandlordAccounting from "./pages/dashboard/LandlordAccounting";
+import TenantAccounting from "./pages/dashboard/TenantAccounting";
 import Apply from "./pages/Apply";
 import SearchListings from "./pages/SearchListings";
 import ListingPublicDetail from "./pages/ListingPublicDetail";
@@ -69,6 +71,7 @@ const App = () => (
             <Route path="/dashboard/contracts" element={<P><TenantContracts /></P>} />
             <Route path="/dashboard/verification" element={<P><TenantVerification /></P>} />
             <Route path="/dashboard/policies" element={<P><TenantPolicies /></P>} />
+            <Route path="/dashboard/accounting" element={<P><TenantAccounting /></P>} />
             {/* Landlord routes */}
             <Route path="/dashboard/listings" element={<P><Listings /></P>} />
             <Route path="/dashboard/listings/new" element={<P><NewListing /></P>} />
@@ -78,6 +81,7 @@ const App = () => (
             <Route path="/dashboard/tenancies/:id" element={<P><LandlordTenancyDetail /></P>} />
             <Route path="/dashboard/workers" element={<P><LandlordWorkers /></P>} />
             <Route path="/dashboard/landlord-verification" element={<P><LandlordVerification /></P>} />
+            <Route path="/dashboard/accounting" element={<P><LandlordAccounting /></P>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
