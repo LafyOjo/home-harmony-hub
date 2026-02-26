@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Clock, CheckCircle2, Mail } from "lucide-react";
+import { Send, Clock, CheckCircle2, Mail, ShieldCheck, Eye } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type Ref = {
   id: string;
@@ -17,19 +18,50 @@ type Ref = {
   created_at: string;
 };
 
+type RefResponse = {
+  id: string;
+  request_id: string;
+  response_data: any;
+  submitted_at: string;
+};
+
 const statusIcons: Record<string, typeof Clock> = { sent: Clock, opened: Mail, completed: CheckCircle2 };
+const statusColors: Record<string, string> = {
+  sent: "bg-muted text-muted-foreground",
+  opened: "bg-primary/10 text-primary",
+  completed: "bg-emerald-500/10 text-emerald-600",
+};
 
 export default function TenantReferences() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [refs, setRefs] = useState<Ref[]>([]);
+  const [responses, setResponses] = useState<Map<string, RefResponse>>(new Map());
   const [form, setForm] = useState({ type: "employer", referee_name: "", referee_email: "" });
   const [loading, setLoading] = useState(false);
+  const [expandedRef, setExpandedRef] = useState<string | null>(null);
 
   const fetchRefs = async () => {
     if (!user) return;
-    const { data } = await supabase.from("reference_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
-    setRefs((data as Ref[]) || []);
+    const { data } = await supabase
+      .from("reference_requests")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    const refList = (data as Ref[]) || [];
+    setRefs(refList);
+
+    // Fetch responses for completed refs
+    const completedIds = refList.filter(r => r.status === "completed").map(r => r.id);
+    if (completedIds.length > 0) {
+      const { data: resps } = await supabase
+        .from("reference_responses")
+        .select("*")
+        .in("request_id", completedIds);
+      const respMap = new Map<string, RefResponse>();
+      (resps || []).forEach((r: any) => respMap.set(r.request_id, r));
+      setResponses(respMap);
+    }
   };
 
   useEffect(() => { fetchRefs(); }, [user]);
@@ -69,6 +101,7 @@ export default function TenantReferences() {
                 <SelectItem value="employer">Employer</SelectItem>
                 <SelectItem value="landlord">Previous Landlord</SelectItem>
                 <SelectItem value="guarantor">Guarantor</SelectItem>
+                <SelectItem value="character">Character Reference</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -90,13 +123,55 @@ export default function TenantReferences() {
         {refs.length === 0 && <p className="text-sm text-muted-foreground">No references requested yet.</p>}
         {refs.map(ref => {
           const Icon = statusIcons[ref.status] || Clock;
+          const resp = responses.get(ref.id);
+          const isExpanded = expandedRef === ref.id;
+
           return (
-            <div key={ref.id} className="flex items-center gap-3 bg-card border border-border rounded-lg p-3">
-              <Icon className="w-5 h-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{ref.referee_name}</p>
-                <p className="text-xs text-muted-foreground capitalize">{ref.type} · {ref.status}</p>
+            <div key={ref.id} className="bg-card border border-border rounded-lg overflow-hidden">
+              <div
+                className="flex items-center gap-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => setExpandedRef(isExpanded ? null : ref.id)}
+              >
+                <Icon className="w-5 h-5 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">{ref.referee_name}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{ref.type} · {ref.referee_email}</p>
+                </div>
+                <Badge variant="secondary" className={statusColors[ref.status] || statusColors.sent}>
+                  {ref.status || "sent"}
+                </Badge>
               </div>
+
+              {isExpanded && (
+                <div className="border-t border-border p-3 bg-muted/20 space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    Requested: {new Date(ref.created_at).toLocaleDateString()}
+                  </p>
+                  {ref.status === "completed" && resp ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-emerald-600">
+                        <ShieldCheck className="w-4 h-4" /> Reference Completed
+                      </div>
+                      {typeof resp.response_data === "object" && resp.response_data && (
+                        <div className="bg-background rounded-lg p-3 space-y-1 text-sm">
+                          {Object.entries(resp.response_data).map(([key, value]) => (
+                            <div key={key} className="flex justify-between">
+                              <span className="text-muted-foreground capitalize">{key.replace(/_/g, " ")}:</span>
+                              <span className="font-medium">{String(value)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      {ref.status === "opened"
+                        ? "Your referee has opened the reference form but hasn't completed it yet."
+                        : "Waiting for your referee to respond."}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}

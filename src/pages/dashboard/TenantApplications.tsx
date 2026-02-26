@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Inbox } from "lucide-react";
+import { Inbox, ChevronDown, ChevronUp } from "lucide-react";
+import ScreeningResults from "@/components/ScreeningResults";
 
 type Application = {
   id: string;
@@ -26,7 +27,7 @@ const statusColors: Record<string, string> = {
 export default function TenantApplications() {
   const { user } = useAuth();
   const [apps, setApps] = useState<Application[]>([]);
-
+  const [expandedApp, setExpandedApp] = useState<string | null>(null);
   useEffect(() => {
     if (!user) return;
     supabase
@@ -49,8 +50,11 @@ export default function TenantApplications() {
       ) : (
         <div className="space-y-3">
           {apps.map(app => (
-            <div key={app.id} className="bg-card border border-border rounded-xl p-4">
-              <div className="flex items-start justify-between">
+            <div key={app.id} className="bg-card border border-border rounded-xl overflow-hidden">
+              <div
+                className="flex items-start justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => setExpandedApp(expandedApp === app.id ? null : app.id)}
+              >
                 <div>
                   <p className="font-medium text-sm">{app.listings?.title || "Listing"}</p>
                   <p className="text-xs text-muted-foreground">{app.listings?.address}</p>
@@ -58,10 +62,18 @@ export default function TenantApplications() {
                     <p className="text-xs text-muted-foreground mt-1">£{app.listings.rent_pcm}/month</p>
                   )}
                 </div>
-                <Badge className={statusColors[app.status] || ""} variant="secondary">
-                  {app.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge className={statusColors[app.status] || ""} variant="secondary">
+                    {app.status}
+                  </Badge>
+                  {expandedApp === app.id ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </div>
               </div>
+              {expandedApp === app.id && (
+                <div className="border-t border-border p-4">
+                  <ScreeningResults applicationId={app.id} />
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -1029,6 +1029,68 @@ export type Database = {
           },
         ]
       }
+      screening_requests: {
+        Row: {
+          application_id: string
+          check_types: Json
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          landlord_id: string
+          overall_result: string | null
+          provider: string
+          provider_reference_id: string | null
+          requested_at: string | null
+          results: Json | null
+          status: string
+          summary: string | null
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          application_id: string
+          check_types?: Json
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          landlord_id: string
+          overall_result?: string | null
+          provider?: string
+          provider_reference_id?: string | null
+          requested_at?: string | null
+          results?: Json | null
+          status?: string
+          summary?: string | null
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          application_id?: string
+          check_types?: Json
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          landlord_id?: string
+          overall_result?: string | null
+          provider?: string
+          provider_reference_id?: string | null
+          requested_at?: string | null
+          results?: Json | null
+          status?: string
+          summary?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "screening_requests_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenancies: {
         Row: {
           application_id: string | null
