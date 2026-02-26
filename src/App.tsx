@@ -29,6 +29,9 @@ import LandlordTenancyDetail from "./pages/dashboard/LandlordTenancyDetail";
 import LandlordWorkers from "./pages/dashboard/LandlordWorkers";
 import LandlordVerification from "./pages/dashboard/LandlordVerification";
 import Apply from "./pages/Apply";
+import SearchListings from "./pages/SearchListings";
+import ListingPublicDetail from "./pages/ListingPublicDetail";
+import NewApplication from "./pages/dashboard/NewApplication";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,12 +52,15 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/apply/:token" element={<Apply />} />
+            <Route path="/listings" element={<SearchListings />} />
+            <Route path="/listings/:id" element={<ListingPublicDetail />} />
             {/* Tenant routes */}
             <Route path="/dashboard" element={<P><DashboardHome /></P>} />
             <Route path="/dashboard/profile" element={<P><TenantProfile /></P>} />
             <Route path="/dashboard/documents" element={<P><TenantDocuments /></P>} />
             <Route path="/dashboard/references" element={<P><TenantReferences /></P>} />
             <Route path="/dashboard/applications" element={<P><TenantApplications /></P>} />
+            <Route path="/dashboard/applications/new/:listingId" element={<P><NewApplication /></P>} />
             <Route path="/dashboard/tenancy" element={<P><TenantTenancy /></P>} />
             <Route path="/dashboard/utilities" element={<P><TenantUtilities /></P>} />
             <Route path="/dashboard/complaints" element={<P><TenantComplaints /></P>} />

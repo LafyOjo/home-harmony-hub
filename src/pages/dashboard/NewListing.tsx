@@ -8,13 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, MapPin } from "lucide-react";
+import { Building2, MapPin, Camera, FileImage, Trash2 } from "lucide-react";
 
 export default function NewListing() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [floorPlan, setFloorPlan] = useState<File | null>(null);
   const [form, setForm] = useState({
     title: "",
     address_line_1: "",
@@ -44,46 +46,129 @@ export default function NewListing() {
       .filter(Boolean)
       .join(", ");
 
-    const descParts = [
-      form.description,
-      form.property_type && `Property type: ${form.property_type}`,
-      form.bedrooms && `Bedrooms: ${form.bedrooms}`,
-      form.bathrooms && `Bathrooms: ${form.bathrooms}`,
-      form.furnished && `Furnished: ${form.furnished}`,
-      form.parking && `Parking: ${form.parking}`,
-      form.garden && `Garden: ${form.garden}`,
-      form.epc_rating && `EPC Rating: ${form.epc_rating}`,
-    ].filter(Boolean).join("\n");
+    try {
+      // Upload floor plan
+      let floorPlanKey: string | null = null;
+      if (floorPlan) {
+        const key = `${user.id}/${Date.now()}-floorplan-${floorPlan.name}`;
+        const { error } = await supabase.storage.from("listing-photos").upload(key, floorPlan);
+        if (error) throw error;
+        floorPlanKey = key;
+      }
 
-    const { error } = await supabase.from("listings").insert({
-      owner_id: user.id,
-      title: form.title,
-      address: fullAddress,
-      postcode: form.postcode,
-      rent_pcm: parseFloat(form.rent_pcm),
-      deposit: form.deposit ? parseFloat(form.deposit) : null,
-      available_from: form.available_from || null,
-      description: descParts || null,
-    });
-    setLoading(false);
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
+      // Insert listing
+      const { data: listing, error } = await supabase.from("listings").insert({
+        owner_id: user.id,
+        title: form.title,
+        address: fullAddress,
+        postcode: form.postcode,
+        rent_pcm: parseFloat(form.rent_pcm),
+        deposit: form.deposit ? parseFloat(form.deposit) : null,
+        available_from: form.available_from || null,
+        description: form.description || null,
+        property_type: form.property_type || null,
+        bedrooms: form.bedrooms ? parseInt(form.bedrooms) : null,
+        bathrooms: form.bathrooms ? parseInt(form.bathrooms) : null,
+        furnished: form.furnished || null,
+        parking: form.parking || null,
+        garden: form.garden || null,
+        epc_rating: form.epc_rating || null,
+        floor_plan_key: floorPlanKey,
+      } as any).select().single();
+
+      if (error) throw error;
+
+      // Upload photos
+      const listingId = (listing as any).id;
+      for (let i = 0; i < photos.length; i++) {
+        const key = `${user.id}/${listingId}/${Date.now()}-${photos[i].name}`;
+        const { error: upErr } = await supabase.storage.from("listing-photos").upload(key, photos[i]);
+        if (upErr) continue;
+        await (supabase as any).from("listing_photos").insert({
+          listing_id: listingId,
+          storage_key: key,
+          display_order: i,
+        });
+      }
+
       toast({ title: "Listing created" });
       navigate("/dashboard/listings");
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
-
   const setSelect = (k: string) => (v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const addPhotos = (files: FileList | null) => {
+    if (!files) return;
+    const newPhotos = Array.from(files).slice(0, 10 - photos.length);
+    setPhotos(prev => [...prev, ...newPhotos]);
+  };
 
   return (
     <div className="max-w-2xl">
       <h1 className="font-display text-2xl font-bold mb-6">Add New Property</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Info */}
+        {/* Photos */}
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Camera className="w-5 h-5 text-primary" />
+            <h2 className="font-display text-lg font-semibold">Property Photos</h2>
+          </div>
+          <p className="text-sm text-muted-foreground">Upload up to 10 photos. The first will be the cover image.</p>
+
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {photos.map((photo, i) => (
+              <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-muted group">
+                <img src={URL.createObjectURL(photo)} alt="" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))}
+                  className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+                {i === 0 && <span className="absolute bottom-1 left-1 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded">Cover</span>}
+              </div>
+            ))}
+            {photos.length < 10 && (
+              <label className="aspect-square rounded-lg border-2 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-primary/40 transition-colors">
+                <Camera className="w-6 h-6 text-muted-foreground" />
+                <input type="file" className="hidden" accept="image/*" multiple onChange={e => addPhotos(e.target.files)} />
+              </label>
+            )}
+          </div>
+
+          {/* Floor Plan */}
+          <div className="pt-2 border-t border-border">
+            <div className="flex items-center gap-2 mb-2">
+              <FileImage className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium">Floor Plan</span>
+            </div>
+            {floorPlan ? (
+              <div className="flex items-center gap-3 bg-muted rounded-lg p-2">
+                <span className="text-sm flex-1 truncate">{floorPlan.name}</span>
+                <Button type="button" variant="ghost" size="icon" onClick={() => setFloorPlan(null)}>
+                  <Trash2 className="w-4 h-4 text-destructive" />
+                </Button>
+              </div>
+            ) : (
+              <label className="cursor-pointer">
+                <div className="border border-dashed border-border rounded-lg p-3 text-center text-sm text-muted-foreground hover:border-primary/40 transition-colors">
+                  Click to upload floor plan
+                </div>
+                <input type="file" className="hidden" accept="image/*,.pdf" onChange={e => setFloorPlan(e.target.files?.[0] || null)} />
+              </label>
+            )}
+          </div>
+        </div>
+
+        {/* Property Details */}
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Building2 className="w-5 h-5 text-primary" />
