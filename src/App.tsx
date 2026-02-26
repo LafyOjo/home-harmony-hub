@@ -14,7 +14,7 @@ import TenantProfile from "./pages/dashboard/TenantProfile";
 import TenantDocuments from "./pages/dashboard/TenantDocuments";
 import TenantReferences from "./pages/dashboard/TenantReferences";
 import TenantApplications from "./pages/dashboard/TenantApplications";
-import TenantTenancy from "./pages/dashboard/TenantTenancy";
+import TenantMyTenancy from "./pages/dashboard/TenantMyTenancy";
 import TenantUtilities from "./pages/dashboard/TenantUtilities";
 import TenantComplaints from "./pages/dashboard/TenantComplaints";
 import TenantMaintenance from "./pages/dashboard/TenantMaintenance";
@@ -64,7 +64,7 @@ const App = () => (
             <Route path="/dashboard/references" element={<P><TenantReferences /></P>} />
             <Route path="/dashboard/applications" element={<P><TenantApplications /></P>} />
             <Route path="/dashboard/applications/new/:listingId" element={<P><NewApplication /></P>} />
-            <Route path="/dashboard/tenancy" element={<P><TenantTenancy /></P>} />
+            <Route path="/dashboard/tenancy" element={<P><TenantMyTenancy /></P>} />
             <Route path="/dashboard/utilities" element={<P><TenantUtilities /></P>} />
             <Route path="/dashboard/complaints" element={<P><TenantComplaints /></P>} />
             <Route path="/dashboard/maintenance" element={<P><TenantMaintenance /></P>} />
