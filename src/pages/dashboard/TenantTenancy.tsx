@@ -3,14 +3,29 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Home, CalendarDays, PoundSterling, AlertTriangle, CheckCircle } from "lucide-react";
+import { Home, CalendarDays, PoundSterling, AlertTriangle, CheckCircle, CreditCard, Receipt, Loader2 } from "lucide-react";
 import { format, differenceInMonths, parseISO } from "date-fns";
 import TenancyChat from "@/components/TenancyChat";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 export default function TenantTenancy() {
   const { user } = useAuth();
+  const [payingId, setPayingId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    if (paymentStatus === "success") {
+      toast({ title: "Payment successful!", description: "Your rent payment has been processed. A receipt will be available shortly." });
+    } else if (paymentStatus === "cancelled") {
+      toast({ title: "Payment cancelled", description: "You can try again anytime.", variant: "destructive" });
+    }
+  }, [searchParams]);
 
   const { data: tenancy, isLoading: tenancyLoading } = useQuery({
     queryKey: ["tenant-tenancy", user?.id],
@@ -55,6 +70,23 @@ export default function TenantTenancy() {
     enabled: !!tenancy,
   });
 
+  const handlePayNow = async (paymentId: string) => {
+    setPayingId(paymentId);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-rent-checkout", {
+        body: { paymentId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Payment error", description: err.message || "Could not initiate payment", variant: "destructive" });
+    } finally {
+      setPayingId(null);
+    }
+  };
+
   if (tenancyLoading) {
     return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
   }
@@ -90,6 +122,8 @@ export default function TenantTenancy() {
       default: return "bg-muted text-muted-foreground";
     }
   };
+
+  const canPay = (status: string) => status === "upcoming" || status === "overdue" || status === "partial";
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -136,7 +170,7 @@ export default function TenantTenancy() {
         <Card className="p-4 border-destructive/50 bg-destructive/5">
           <div className="flex items-center gap-2 text-destructive font-medium">
             <AlertTriangle className="w-4 h-4" />
-            {overduePayments.length} overdue payment{overduePayments.length > 1 ? "s" : ""} — £{overduePayments.reduce((s, p) => s + Number(p.amount) - Number(p.paid_amount || 0), 0).toLocaleString()} outstanding
+            {overduePayments.length} overdue payment{overduePayments.length > 1 ? "s" : ""} — £{overduePayments.reduce((s, p) => s + Number(p.amount) - Number(p.paid_amount || 0) + Number((p as any).late_fee || 0), 0).toLocaleString()} outstanding (incl. late fees)
           </div>
         </Card>
       )}
@@ -154,27 +188,56 @@ export default function TenantTenancy() {
       <div>
         <h2 className="font-display text-lg font-semibold mb-3">Payment Schedule</h2>
         <div className="space-y-2">
-          {payments?.map((p) => (
-            <Card key={p.id} className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${p.status === 'paid' ? 'bg-success/10' : p.status === 'overdue' ? 'bg-destructive/10' : 'bg-muted'}`}>
-                  {p.status === "paid" ? <CheckCircle className="w-4 h-4 text-success" /> : 
-                   p.status === "overdue" ? <AlertTriangle className="w-4 h-4 text-destructive" /> :
-                   <CalendarDays className="w-4 h-4 text-muted-foreground" />}
+          {payments?.map((p) => {
+            const lateFee = Number((p as any).late_fee || 0);
+            const receiptUrl = (p as any).receipt_url;
+            return (
+              <Card key={p.id} className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${p.status === 'paid' ? 'bg-success/10' : p.status === 'overdue' ? 'bg-destructive/10' : 'bg-muted'}`}>
+                    {p.status === "paid" ? <CheckCircle className="w-4 h-4 text-success" /> :
+                     p.status === "overdue" ? <AlertTriangle className="w-4 h-4 text-destructive" /> :
+                     <CalendarDays className="w-4 h-4 text-muted-foreground" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{format(parseISO(p.due_date), "d MMMM yyyy")}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {p.status === "paid" && p.paid_date ? `Paid ${format(parseISO(p.paid_date), "d MMM")}` :
+                       p.status === "partial" ? `£${Number(p.paid_amount).toLocaleString()} of £${Number(p.amount).toLocaleString()} paid` :
+                       p.status === "overdue" && lateFee > 0 ? `Incl. £${lateFee.toLocaleString()} late fee` : ""}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium">{format(parseISO(p.due_date), "d MMMM yyyy")}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {p.status === "paid" && p.paid_date ? `Paid ${format(parseISO(p.paid_date), "d MMM")}` : p.status === "partial" ? `£${Number(p.paid_amount).toLocaleString()} of £${Number(p.amount).toLocaleString()} paid` : ""}
-                  </p>
+                <div className="flex items-center gap-2">
+                  <div className="text-right mr-1">
+                    <span className="font-medium">£{Number(p.amount).toLocaleString()}</span>
+                    {lateFee > 0 && p.status !== "paid" && (
+                      <p className="text-xs text-destructive">+£{lateFee.toLocaleString()} fee</p>
+                    )}
+                  </div>
+                  <Badge className={statusColor(p.status)}>{p.status}</Badge>
+                  {canPay(p.status) && (
+                    <Button
+                      size="sm"
+                      onClick={() => handlePayNow(p.id)}
+                      disabled={payingId === p.id}
+                      className="ml-1"
+                    >
+                      {payingId === p.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CreditCard className="w-3 h-3" />}
+                      <span className="ml-1">Pay</span>
+                    </Button>
+                  )}
+                  {p.status === "paid" && receiptUrl && (
+                    <Button size="sm" variant="ghost" asChild>
+                      <a href={receiptUrl} target="_blank" rel="noopener noreferrer">
+                        <Receipt className="w-3 h-3" />
+                      </a>
+                    </Button>
+                  )}
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="font-medium">£{Number(p.amount).toLocaleString()}</span>
-                <Badge className={statusColor(p.status)}>{p.status}</Badge>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
           {(!payments || payments.length === 0) && (
             <p className="text-sm text-muted-foreground text-center py-4">No payment records yet.</p>
           )}
