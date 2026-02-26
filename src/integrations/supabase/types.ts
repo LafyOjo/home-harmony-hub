@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      application_documents: {
+        Row: {
+          application_id: string
+          created_at: string | null
+          document_type: string
+          file_name: string
+          id: string
+          storage_key: string
+          uploaded_by: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string | null
+          document_type: string
+          file_name: string
+          id?: string
+          storage_key: string
+          uploaded_by: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string | null
+          document_type?: string
+          file_name?: string
+          id?: string
+          storage_key?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_documents_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      application_references: {
+        Row: {
+          application_id: string
+          created_at: string | null
+          id: string
+          reference_request_id: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string | null
+          id?: string
+          reference_request_id: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string | null
+          id?: string
+          reference_request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_references_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "application_references_reference_request_id_fkey"
+            columns: ["reference_request_id"]
+            isOneToOne: false
+            referencedRelation: "reference_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       applications: {
         Row: {
           apply_link_id: string | null
@@ -347,6 +421,38 @@ export type Database = {
           },
         ]
       }
+      listing_photos: {
+        Row: {
+          created_at: string | null
+          display_order: number
+          id: string
+          listing_id: string
+          storage_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          listing_id: string
+          storage_key: string
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          listing_id?: string
+          storage_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_photos_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_tenants: {
         Row: {
           added_by: string
@@ -384,13 +490,21 @@ export type Database = {
         Row: {
           address: string
           available_from: string | null
+          bathrooms: number | null
+          bedrooms: number | null
           created_at: string | null
           deposit: number | null
           description: string | null
+          epc_rating: string | null
+          floor_plan_key: string | null
+          furnished: string | null
+          garden: string | null
           id: string
           is_active: boolean | null
           owner_id: string
+          parking: string | null
           postcode: string
+          property_type: string | null
           rent_pcm: number
           title: string
           updated_at: string | null
@@ -398,13 +512,21 @@ export type Database = {
         Insert: {
           address: string
           available_from?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
           created_at?: string | null
           deposit?: number | null
           description?: string | null
+          epc_rating?: string | null
+          floor_plan_key?: string | null
+          furnished?: string | null
+          garden?: string | null
           id?: string
           is_active?: boolean | null
           owner_id: string
+          parking?: string | null
           postcode: string
+          property_type?: string | null
           rent_pcm: number
           title: string
           updated_at?: string | null
@@ -412,13 +534,21 @@ export type Database = {
         Update: {
           address?: string
           available_from?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
           created_at?: string | null
           deposit?: number | null
           description?: string | null
+          epc_rating?: string | null
+          floor_plan_key?: string | null
+          furnished?: string | null
+          garden?: string | null
           id?: string
           is_active?: boolean | null
           owner_id?: string
+          parking?: string | null
           postcode?: string
+          property_type?: string | null
           rent_pcm?: number
           title?: string
           updated_at?: string | null
