@@ -1,0 +1,102 @@
+{
+  "common": {
+    "appName": "TenantVault",
+    "logIn": "Iniciar sesión",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "getStarted": "Empezar",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "submit": "Enviar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "search": "Buscar",
+    "noResults": "Sin resultados",
+    "error": "Algo salió mal",
+    "success": "Éxito",
+    "perMonth": "/mes",
+    "skipToContent": "Ir al contenido principal",
+    "language": "Idioma",
+    "changeLanguage": "Cambiar idioma"
+  },
+  "landing": {
+    "heroTitle": "El alquiler hecho",
+    "heroHighlight": "simple, seguro",
+    "heroEnd": "y rastreable",
+    "heroDesc": "Reemplaza el papeleo desordenado con un flujo de trabajo digital estructurado. Crea tu perfil, sube documentos, genera tu paquete de inquilino y aplica — todo en un solo lugar.",
+    "imTenant": "Soy inquilino",
+    "imLandlord": "Soy propietario",
+    "whyTitle": "¿Por qué TenantVault?",
+    "howItWorks": "Cómo funciona para inquilinos",
+    "footer": "© 2026 TenantVault. Diseñado para inquilinos y propietarios del Reino Unido.",
+    "features": {
+      "security": { "title": "Seguridad bancaria", "desc": "Documentos almacenados con cifrado, URLs firmadas y controles de acceso estrictos." },
+      "tenantPack": { "title": "Paquete de inquilino", "desc": "Genera un paquete PDF profesional con perfil, referencias y documentos." },
+      "pipeline": { "title": "Pipeline inteligente", "desc": "Los propietarios rastrean solicitantes a través de un pipeline Kanban con verificaciones de solvencia." }
+    },
+    "steps": {
+      "1": "Crea tu perfil y sube documentos",
+      "2": "Solicita referencias de empleador y propietario anterior",
+      "3": "Genera tu paquete de inquilino",
+      "4": "Aplica a propiedades con un solo toque"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Bienvenido de vuelta",
+    "createAccount": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "fullName": "Nombre completo",
+    "signingIn": "Iniciando sesión...",
+    "creatingAccount": "Creando cuenta...",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "register": "Registrarse",
+    "iAmA": "Soy...",
+    "tenant": "Inquilino",
+    "landlord": "Propietario / Agente",
+    "agreeTerms": "Acepto los términos de servicio y la política de privacidad",
+    "acceptTerms": "Por favor acepta los términos",
+    "checkEmail": "Revisa tu correo",
+    "verificationSent": "Enviamos un enlace de verificación a tu bandeja de entrada.",
+    "loginFailed": "Error al iniciar sesión",
+    "registrationFailed": "Error al registrarse"
+  },
+  "nav": {
+    "home": "Inicio",
+    "myTenancy": "Mi alquiler",
+    "utilities": "Servicios",
+    "complaints": "Quejas",
+    "maintenance": "Mantenimiento",
+    "contracts": "Contratos",
+    "policies": "Políticas",
+    "accounting": "Contabilidad",
+    "profile": "Perfil",
+    "references": "Referencias",
+    "applications": "Solicitudes",
+    "verification": "Verificación",
+    "tenancies": "Alquileres",
+    "listings": "Propiedades",
+    "pipeline": "Pipeline",
+    "workers": "Trabajadores"
+  },
+  "dashboard": {
+    "myApplications": "Mis solicitudes",
+    "noApplications": "Aún no hay solicitudes. Usa un enlace de solicitud para comenzar.",
+    "listing": "Propiedad"
+  },
+  "a11y": {
+    "mainNavigation": "Navegación principal",
+    "userMenu": "Menú de usuario",
+    "mobileMenu": "Menú móvil",
+    "openMenu": "Abrir menú de navegación",
+    "closeMenu": "Cerrar menú de navegación",
+    "notifications": "Notificaciones",
+    "stepNumber": "Paso {{number}}",
+    "featureIcon": "Icono de {{feature}}",
+    "completedStep": "Completado"
+  }
+}

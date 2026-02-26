@@ -1,0 +1,102 @@
+{
+  "common": {
+    "appName": "TenantVault",
+    "logIn": "Connexion",
+    "signIn": "Se connecter",
+    "signOut": "Déconnexion",
+    "getStarted": "Commencer",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "submit": "Soumettre",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "search": "Rechercher",
+    "noResults": "Aucun résultat",
+    "error": "Une erreur est survenue",
+    "success": "Succès",
+    "perMonth": "/mois",
+    "skipToContent": "Aller au contenu principal",
+    "language": "Langue",
+    "changeLanguage": "Changer de langue"
+  },
+  "landing": {
+    "heroTitle": "La location rendue",
+    "heroHighlight": "simple, sécurisée",
+    "heroEnd": "& traçable",
+    "heroDesc": "Remplacez la paperasse désordonnée par un flux de travail numérique structuré. Créez votre profil, téléchargez vos documents, générez votre dossier locataire et postulez — tout en un seul endroit.",
+    "imTenant": "Je suis locataire",
+    "imLandlord": "Je suis propriétaire",
+    "whyTitle": "Pourquoi TenantVault ?",
+    "howItWorks": "Comment ça marche pour les locataires",
+    "footer": "© 2026 TenantVault. Conçu pour les locataires et propriétaires britanniques.",
+    "features": {
+      "security": { "title": "Sécurité bancaire", "desc": "Documents stockés avec chiffrement, URL signées et contrôles d'accès stricts." },
+      "tenantPack": { "title": "Dossier locataire", "desc": "Générez un dossier PDF professionnel avec profil, références et documents." },
+      "pipeline": { "title": "Pipeline intelligent", "desc": "Les propriétaires suivent les candidats via un pipeline Kanban avec vérifications de solvabilité." }
+    },
+    "steps": {
+      "1": "Créez votre profil et téléchargez vos documents",
+      "2": "Demandez des références employeur et propriétaire",
+      "3": "Générez votre dossier locataire",
+      "4": "Postulez aux annonces en un clic"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Bon retour",
+    "createAccount": "Créer un compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "fullName": "Nom complet",
+    "signingIn": "Connexion en cours...",
+    "creatingAccount": "Création du compte...",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "register": "S'inscrire",
+    "iAmA": "Je suis...",
+    "tenant": "Locataire",
+    "landlord": "Propriétaire / Agent",
+    "agreeTerms": "J'accepte les conditions d'utilisation et la politique de confidentialité",
+    "acceptTerms": "Veuillez accepter les conditions",
+    "checkEmail": "Vérifiez votre email",
+    "verificationSent": "Nous avons envoyé un lien de vérification à votre boîte de réception.",
+    "loginFailed": "Échec de la connexion",
+    "registrationFailed": "Échec de l'inscription"
+  },
+  "nav": {
+    "home": "Accueil",
+    "myTenancy": "Ma location",
+    "utilities": "Services",
+    "complaints": "Réclamations",
+    "maintenance": "Maintenance",
+    "contracts": "Contrats",
+    "policies": "Politiques",
+    "accounting": "Comptabilité",
+    "profile": "Profil",
+    "references": "Références",
+    "applications": "Candidatures",
+    "verification": "Vérification",
+    "tenancies": "Locations",
+    "listings": "Annonces",
+    "pipeline": "Pipeline",
+    "workers": "Ouvriers"
+  },
+  "dashboard": {
+    "myApplications": "Mes candidatures",
+    "noApplications": "Pas encore de candidatures. Utilisez un lien de candidature pour commencer.",
+    "listing": "Annonce"
+  },
+  "a11y": {
+    "mainNavigation": "Navigation principale",
+    "userMenu": "Menu utilisateur",
+    "mobileMenu": "Menu mobile",
+    "openMenu": "Ouvrir le menu de navigation",
+    "closeMenu": "Fermer le menu de navigation",
+    "notifications": "Notifications",
+    "stepNumber": "Étape {{number}}",
+    "featureIcon": "Icône {{feature}}",
+    "completedStep": "Terminé"
+  }
+}

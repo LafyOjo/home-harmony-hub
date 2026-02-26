@@ -1,0 +1,102 @@
+{
+  "common": {
+    "appName": "TenantVault",
+    "logIn": "Log in",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "getStarted": "Get Started",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search",
+    "noResults": "No results found",
+    "error": "Something went wrong",
+    "success": "Success",
+    "perMonth": "/month",
+    "skipToContent": "Skip to main content",
+    "language": "Language",
+    "changeLanguage": "Change language"
+  },
+  "landing": {
+    "heroTitle": "Renting made",
+    "heroHighlight": "simple, secure",
+    "heroEnd": "& trackable",
+    "heroDesc": "Replace messy paperwork with a structured, digital tenancy workflow. Build your profile, upload documents, generate your Tenant Pack, and apply — all in one place.",
+    "imTenant": "I'm a Tenant",
+    "imLandlord": "I'm a Landlord",
+    "whyTitle": "Why TenantVault?",
+    "howItWorks": "How it works for tenants",
+    "footer": "© 2026 TenantVault. Built for UK renters and landlords.",
+    "features": {
+      "security": { "title": "Bank-Level Security", "desc": "Documents stored with encryption, signed URLs, and strict access controls." },
+      "tenantPack": { "title": "Tenant Pack", "desc": "Generate a professional PDF pack with profile, references, and documents." },
+      "pipeline": { "title": "Smart Pipeline", "desc": "Landlords track applicants through a Kanban-style pipeline with affordability checks." }
+    },
+    "steps": {
+      "1": "Create your profile & upload documents",
+      "2": "Request employer & landlord references",
+      "3": "Generate your Tenant Pack",
+      "4": "Apply to listings with one tap"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account...",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "register": "Register",
+    "iAmA": "I am a...",
+    "tenant": "Tenant",
+    "landlord": "Landlord / Agent",
+    "agreeTerms": "I agree to the Terms of Service and Privacy Policy",
+    "acceptTerms": "Please accept the terms",
+    "checkEmail": "Check your email",
+    "verificationSent": "We sent a verification link to your inbox.",
+    "loginFailed": "Login failed",
+    "registrationFailed": "Registration failed"
+  },
+  "nav": {
+    "home": "Home",
+    "myTenancy": "My Tenancy",
+    "utilities": "Utilities",
+    "complaints": "Complaints",
+    "maintenance": "Maintenance",
+    "contracts": "Contracts",
+    "policies": "Policies",
+    "accounting": "Accounting",
+    "profile": "Profile",
+    "references": "References",
+    "applications": "Applications",
+    "verification": "Verification",
+    "tenancies": "Tenancies",
+    "listings": "Listings",
+    "pipeline": "Pipeline",
+    "workers": "Workers"
+  },
+  "dashboard": {
+    "myApplications": "My Applications",
+    "noApplications": "No applications yet. Use an apply link to start one.",
+    "listing": "Listing"
+  },
+  "a11y": {
+    "mainNavigation": "Main navigation",
+    "userMenu": "User menu",
+    "mobileMenu": "Mobile menu",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "notifications": "Notifications",
+    "stepNumber": "Step {{number}}",
+    "featureIcon": "{{feature}} icon",
+    "completedStep": "Completed"
+  }
+}
