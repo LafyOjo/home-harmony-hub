@@ -1,0 +1,102 @@
+{
+  "common": {
+    "appName": "TenantVault",
+    "logIn": "تسجيل الدخول",
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "getStarted": "ابدأ الآن",
+    "loading": "جارٍ التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "submit": "إرسال",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "back": "رجوع",
+    "next": "التالي",
+    "search": "بحث",
+    "noResults": "لا توجد نتائج",
+    "error": "حدث خطأ ما",
+    "success": "تم بنجاح",
+    "perMonth": "/شهر",
+    "skipToContent": "انتقل إلى المحتوى الرئيسي",
+    "language": "اللغة",
+    "changeLanguage": "تغيير اللغة"
+  },
+  "landing": {
+    "heroTitle": "الإيجار أصبح",
+    "heroHighlight": "بسيطاً وآمناً",
+    "heroEnd": "وقابلاً للتتبع",
+    "heroDesc": "استبدل الأوراق الفوضوية بسير عمل رقمي منظم للإيجار. أنشئ ملفك الشخصي، ارفع المستندات، أنشئ حزمة المستأجر، وتقدم — كل ذلك في مكان واحد.",
+    "imTenant": "أنا مستأجر",
+    "imLandlord": "أنا مالك عقار",
+    "whyTitle": "لماذا TenantVault؟",
+    "howItWorks": "كيف يعمل للمستأجرين",
+    "footer": "© 2026 TenantVault. مصمم للمستأجرين وأصحاب العقارات في المملكة المتحدة.",
+    "features": {
+      "security": { "title": "أمان بمستوى البنوك", "desc": "تُخزَّن المستندات بتشفير وعناوين URL موقعة وضوابط وصول صارمة." },
+      "tenantPack": { "title": "حزمة المستأجر", "desc": "أنشئ حزمة PDF احترافية تتضمن الملف الشخصي والمراجع والمستندات." },
+      "pipeline": { "title": "خط أنابيب ذكي", "desc": "يتتبع الملاك المتقدمين عبر لوحة كانبان مع فحوصات القدرة على تحمل التكاليف." }
+    },
+    "steps": {
+      "1": "أنشئ ملفك الشخصي وارفع المستندات",
+      "2": "اطلب مراجع من صاحب العمل والمالك السابق",
+      "3": "أنشئ حزمة المستأجر الخاصة بك",
+      "4": "تقدم للعقارات بنقرة واحدة"
+    }
+  },
+  "auth": {
+    "welcomeBack": "مرحباً بعودتك",
+    "createAccount": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "fullName": "الاسم الكامل",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "creatingAccount": "جارٍ إنشاء الحساب...",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "register": "سجّل",
+    "iAmA": "أنا...",
+    "tenant": "مستأجر",
+    "landlord": "مالك / وكيل",
+    "agreeTerms": "أوافق على شروط الخدمة وسياسة الخصوصية",
+    "acceptTerms": "يرجى قبول الشروط",
+    "checkEmail": "تحقق من بريدك الإلكتروني",
+    "verificationSent": "أرسلنا رابط التحقق إلى بريدك الوارد.",
+    "loginFailed": "فشل تسجيل الدخول",
+    "registrationFailed": "فشل التسجيل"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "myTenancy": "إيجاري",
+    "utilities": "المرافق",
+    "complaints": "الشكاوى",
+    "maintenance": "الصيانة",
+    "contracts": "العقود",
+    "policies": "السياسات",
+    "accounting": "المحاسبة",
+    "profile": "الملف الشخصي",
+    "references": "المراجع",
+    "applications": "الطلبات",
+    "verification": "التحقق",
+    "tenancies": "الإيجارات",
+    "listings": "العقارات",
+    "pipeline": "خط الأنابيب",
+    "workers": "العمال"
+  },
+  "dashboard": {
+    "myApplications": "طلباتي",
+    "noApplications": "لا توجد طلبات بعد. استخدم رابط التقديم لبدء طلب.",
+    "listing": "العقار"
+  },
+  "a11y": {
+    "mainNavigation": "التنقل الرئيسي",
+    "userMenu": "قائمة المستخدم",
+    "mobileMenu": "القائمة المحمولة",
+    "openMenu": "فتح قائمة التنقل",
+    "closeMenu": "إغلاق قائمة التنقل",
+    "notifications": "الإشعارات",
+    "stepNumber": "الخطوة {{number}}",
+    "featureIcon": "أيقونة {{feature}}",
+    "completedStep": "مكتمل"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "common": {
+    "appName": "TenantVault",
+    "logIn": "登录",
+    "signIn": "登录",
+    "signOut": "退出",
+    "getStarted": "开始使用",
+    "loading": "加载中...",
+    "save": "保存",
+    "cancel": "取消",
+    "submit": "提交",
+    "delete": "删除",
+    "edit": "编辑",
+    "back": "返回",
+    "next": "下一步",
+    "search": "搜索",
+    "noResults": "没有结果",
+    "error": "出了点问题",
+    "success": "成功",
+    "perMonth": "/月",
+    "skipToContent": "跳转到主要内容",
+    "language": "语言",
+    "changeLanguage": "切换语言"
+  },
+  "landing": {
+    "heroTitle": "租房变得",
+    "heroHighlight": "简单、安全",
+    "heroEnd": "且可追踪",
+    "heroDesc": "用结构化的数字租赁工作流程取代杂乱的文书工作。创建您的个人资料、上传文件、生成租户包，一站式申请。",
+    "imTenant": "我是租户",
+    "imLandlord": "我是房东",
+    "whyTitle": "为什么选择 TenantVault？",
+    "howItWorks": "租户使用流程",
+    "footer": "© 2026 TenantVault。专为英国租户和房东打造。",
+    "features": {
+      "security": { "title": "银行级安全", "desc": "文件采用加密存储、签名URL和严格的访问控制。" },
+      "tenantPack": { "title": "租户包", "desc": "生成包含个人资料、推荐信和文件的专业PDF包。" },
+      "pipeline": { "title": "智能管道", "desc": "房东通过看板式管道跟踪申请人，附带负担能力检查。" }
+    },
+    "steps": {
+      "1": "创建个人资料并上传文件",
+      "2": "申请雇主和房东推荐信",
+      "3": "生成您的租户包",
+      "4": "一键申请房源"
+    }
+  },
+  "auth": {
+    "welcomeBack": "欢迎回来",
+    "createAccount": "创建账户",
+    "email": "电子邮件",
+    "password": "密码",
+    "fullName": "全名",
+    "signingIn": "登录中...",
+    "creatingAccount": "创建账户中...",
+    "noAccount": "没有账户？",
+    "haveAccount": "已有账户？",
+    "register": "注册",
+    "iAmA": "我是...",
+    "tenant": "租户",
+    "landlord": "房东 / 代理",
+    "agreeTerms": "我同意服务条款和隐私政策",
+    "acceptTerms": "请接受条款",
+    "checkEmail": "检查您的邮箱",
+    "verificationSent": "我们已向您的收件箱发送了验证链接。",
+    "loginFailed": "登录失败",
+    "registrationFailed": "注册失败"
+  },
+  "nav": {
+    "home": "首页",
+    "myTenancy": "我的租赁",
+    "utilities": "公用事业",
+    "complaints": "投诉",
+    "maintenance": "维修",
+    "contracts": "合同",
+    "policies": "政策",
+    "accounting": "记账",
+    "profile": "个人资料",
+    "references": "推荐信",
+    "applications": "申请",
+    "verification": "验证",
+    "tenancies": "租赁管理",
+    "listings": "房源",
+    "pipeline": "管道",
+    "workers": "工人"
+  },
+  "dashboard": {
+    "myApplications": "我的申请",
+    "noApplications": "还没有申请。使用申请链接开始。",
+    "listing": "房源"
+  },
+  "a11y": {
+    "mainNavigation": "主导航",
+    "userMenu": "用户菜单",
+    "mobileMenu": "移动菜单",
+    "openMenu": "打开导航菜单",
+    "closeMenu": "关闭导航菜单",
+    "notifications": "通知",
+    "stepNumber": "第 {{number}} 步",
+    "featureIcon": "{{feature}} 图标",
+    "completedStep": "已完成"
+  }
+}

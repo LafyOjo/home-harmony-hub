@@ -106,6 +106,21 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
   }
+
+  /* Enhanced focus styles for keyboard navigation (WCAG 2.4.7) */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring rounded-sm;
+  }
+
+  /* Reduced motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 @layer utilities {
@@ -116,3 +131,7 @@
     font-family: var(--font-body);
   }
 }
+
+/* RTL logical property helpers */
+[dir="rtl"] .ms-auto { margin-right: auto; margin-left: unset; }
+[dir="rtl"] .me-auto { margin-left: auto; margin-right: unset; }

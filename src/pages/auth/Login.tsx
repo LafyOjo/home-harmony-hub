@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Login() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +22,7 @@ export default function Login() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
-      toast({ title: "Login failed", description: error.message, variant: "destructive" });
+      toast({ title: t("auth.loginFailed"), description: error.message, variant: "destructive" });
     } else {
       navigate("/dashboard");
     }
@@ -28,27 +31,30 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        <Link to="/" className="block text-center font-display text-2xl font-bold text-primary mb-8">
-          TenantVault
-        </Link>
+        <div className="flex justify-between items-center mb-8">
+          <Link to="/" className="font-display text-2xl font-bold text-primary" aria-label={t("common.appName")}>
+            {t("common.appName")}
+          </Link>
+          <LanguageSwitcher />
+        </div>
         <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-          <h1 className="font-display text-xl font-bold mb-6">Welcome back</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <h1 className="font-display text-xl font-bold mb-6">{t("auth.welcomeBack")}</h1>
+          <form onSubmit={handleLogin} className="space-y-4" aria-label={t("auth.welcomeBack")}>
             <div>
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+              <Label htmlFor="email">{t("auth.email")}</Label>
+              <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+              <Label htmlFor="password">{t("auth.password")}</Label>
+              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? t("auth.signingIn") : t("common.signIn")}
             </Button>
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
-            Don't have an account?{" "}
-            <Link to="/auth/register" className="text-primary font-medium hover:underline">Register</Link>
+            {t("auth.noAccount")}{" "}
+            <Link to="/auth/register" className="text-primary font-medium hover:underline">{t("auth.register")}</Link>
           </p>
         </div>
       </div>
