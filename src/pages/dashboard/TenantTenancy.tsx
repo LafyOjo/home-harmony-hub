@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Home, CalendarDays, PoundSterling, AlertTriangle, CheckCircle } from "lucide-react";
 import { format, differenceInMonths, parseISO } from "date-fns";
+import TenancyChat from "@/components/TenancyChat";
 
 export default function TenantTenancy() {
   const { user } = useAuth();
@@ -179,6 +180,9 @@ export default function TenantTenancy() {
           )}
         </div>
       </div>
+
+      {/* Chat */}
+      <TenancyChat tenancyId={tenancy.id} className="h-96" />
     </div>
   );
 }

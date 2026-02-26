@@ -3,10 +3,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
-  Home, User, FileText, Send, Inbox, Building2, List, LogOut, Bell, Menu, X,
-  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users,
+  Home, User, FileText, Send, Inbox, Building2, List, LogOut, Menu, X,
+  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText,
 } from "lucide-react";
 import { useState } from "react";
+import NotificationBell from "@/components/NotificationBell";
 
 const tenantNav = [
   { to: "/dashboard", icon: Home, label: "Home" },
@@ -15,8 +16,8 @@ const tenantNav = [
   { to: "/dashboard/complaints", icon: MessageSquare, label: "Complaints" },
   { to: "/dashboard/maintenance", icon: Wrench, label: "Maintenance" },
   { to: "/dashboard/contracts", icon: FileSignature, label: "Contracts" },
+  { to: "/dashboard/policies", icon: ScrollText, label: "Policies" },
   { to: "/dashboard/profile", icon: User, label: "Profile" },
-  { to: "/dashboard/documents", icon: FileText, label: "Documents" },
   { to: "/dashboard/references", icon: Send, label: "References" },
   { to: "/dashboard/applications", icon: Inbox, label: "Applications" },
   { to: "/dashboard/verification", icon: ShieldCheck, label: "Verification" },
@@ -71,7 +72,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="pt-4 border-t border-border">
-          <p className="text-xs text-muted-foreground mb-2 truncate">{user?.email}</p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-muted-foreground truncate flex-1">{user?.email}</p>
+            <NotificationBell />
+          </div>
           <Button variant="ghost" size="sm" className="w-full justify-start gap-2" onClick={handleSignOut}>
             <LogOut className="w-4 h-4" /> Sign out
           </Button>
@@ -83,9 +87,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <header className="lg:hidden flex items-center justify-between border-b border-border bg-card px-4 h-14">
           <Link to="/" className="font-display text-lg font-bold text-primary">TenantVault</Link>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
-              <Bell className="w-5 h-5" />
-            </Button>
+            <NotificationBell />
             <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
