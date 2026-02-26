@@ -971,37 +971,52 @@ export type Database = {
         Row: {
           amount: number
           created_at: string | null
+          currency: string | null
           due_date: string
           id: string
+          late_fee: number | null
           paid_amount: number | null
           paid_date: string | null
           payment_method: string | null
+          receipt_url: string | null
           reference: string | null
           status: string
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
           tenancy_id: string
         }
         Insert: {
           amount: number
           created_at?: string | null
+          currency?: string | null
           due_date: string
           id?: string
+          late_fee?: number | null
           paid_amount?: number | null
           paid_date?: string | null
           payment_method?: string | null
+          receipt_url?: string | null
           reference?: string | null
           status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
           tenancy_id: string
         }
         Update: {
           amount?: number
           created_at?: string | null
+          currency?: string | null
           due_date?: string
           id?: string
+          late_fee?: number | null
           paid_amount?: number | null
           paid_date?: string | null
           payment_method?: string | null
+          receipt_url?: string | null
           reference?: string | null
           status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
           tenancy_id?: string
         }
         Relationships: [
