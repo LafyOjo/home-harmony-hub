@@ -17,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PoundSterling, Zap, MessageSquare, Wrench, FileSignature, Plus, Users, RefreshCw, ScrollText, ShieldCheck, Upload, Check } from "lucide-react";
 import { format, parseISO, differenceInDays, addMonths } from "date-fns";
 import { useState } from "react";
+import TenancyChat from "@/components/TenancyChat";
 
 export default function LandlordTenancyDetail() {
   const { id } = useParams<{ id: string }>();
@@ -374,7 +375,7 @@ This agreement is governed by the laws of England and Wales.`;
       </motion.div>
 
       <Tabs defaultValue="payments">
-        <TabsList className="grid grid-cols-7 w-full">
+        <TabsList className="grid grid-cols-8 w-full">
           <TabsTrigger value="payments"><PoundSterling className="w-4 h-4 mr-1 hidden sm:block" />Rent</TabsTrigger>
           <TabsTrigger value="utilities"><Zap className="w-4 h-4 mr-1 hidden sm:block" />Utilities</TabsTrigger>
           <TabsTrigger value="complaints"><MessageSquare className="w-4 h-4 mr-1 hidden sm:block" />Complaints</TabsTrigger>
@@ -382,6 +383,7 @@ This agreement is governed by the laws of England and Wales.`;
           <TabsTrigger value="contracts"><FileSignature className="w-4 h-4 mr-1 hidden sm:block" />Leases</TabsTrigger>
           <TabsTrigger value="renewals"><RefreshCw className="w-4 h-4 mr-1 hidden sm:block" />Renewals</TabsTrigger>
           <TabsTrigger value="notices"><ScrollText className="w-4 h-4 mr-1 hidden sm:block" />Notices</TabsTrigger>
+          <TabsTrigger value="chat"><MessageSquare className="w-4 h-4 mr-1 hidden sm:block" />Chat</TabsTrigger>
         </TabsList>
 
         {/* PAYMENTS TAB */}
@@ -663,6 +665,11 @@ This agreement is governed by the laws of England and Wales.`;
               <p className="text-sm text-muted-foreground">No policy consents recorded yet.</p>
             )}
           </div>
+        </TabsContent>
+
+        {/* CHAT TAB */}
+        <TabsContent value="chat" className="mt-4">
+          <TenancyChat tenancyId={id!} className="h-[500px]" />
         </TabsContent>
       </Tabs>
 
