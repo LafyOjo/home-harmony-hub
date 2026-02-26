@@ -251,11 +251,17 @@ export type Database = {
           contract_type: string
           created_at: string | null
           id: string
+          is_uploaded: boolean | null
+          landlord_signature_ip: string | null
+          landlord_signature_name: string | null
           landlord_signed_at: string | null
+          lease_content: string | null
           notes: string | null
           status: string
           storage_key: string | null
           tenancy_id: string
+          tenant_signature_ip: string | null
+          tenant_signature_name: string | null
           tenant_signed_at: string | null
           title: string
           updated_at: string | null
@@ -266,11 +272,17 @@ export type Database = {
           contract_type?: string
           created_at?: string | null
           id?: string
+          is_uploaded?: boolean | null
+          landlord_signature_ip?: string | null
+          landlord_signature_name?: string | null
           landlord_signed_at?: string | null
+          lease_content?: string | null
           notes?: string | null
           status?: string
           storage_key?: string | null
           tenancy_id: string
+          tenant_signature_ip?: string | null
+          tenant_signature_name?: string | null
           tenant_signed_at?: string | null
           title: string
           updated_at?: string | null
@@ -281,11 +293,17 @@ export type Database = {
           contract_type?: string
           created_at?: string | null
           id?: string
+          is_uploaded?: boolean | null
+          landlord_signature_ip?: string | null
+          landlord_signature_name?: string | null
           landlord_signed_at?: string | null
+          lease_content?: string | null
           notes?: string | null
           status?: string
           storage_key?: string | null
           tenancy_id?: string
+          tenant_signature_ip?: string | null
+          tenant_signature_name?: string | null
           tenant_signed_at?: string | null
           title?: string
           updated_at?: string | null
@@ -754,6 +772,50 @@ export type Database = {
           },
         ]
       }
+      policy_consents: {
+        Row: {
+          consented: boolean
+          consented_at: string | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          policy_type: string
+          policy_version: string
+          tenancy_id: string
+          user_id: string
+        }
+        Insert: {
+          consented?: boolean
+          consented_at?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          policy_type: string
+          policy_version?: string
+          tenancy_id: string
+          user_id: string
+        }
+        Update: {
+          consented?: boolean
+          consented_at?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          policy_type?: string
+          policy_version?: string
+          tenancy_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policy_consents_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -851,6 +913,53 @@ export type Database = {
             columns: ["request_id"]
             isOneToOne: false
             referencedRelation: "reference_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      renewal_proposals: {
+        Row: {
+          created_at: string | null
+          id: string
+          new_end_date: string
+          new_rent_pcm: number
+          new_start_date: string
+          notes: string | null
+          proposed_by: string
+          responded_at: string | null
+          status: string
+          tenancy_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          new_end_date: string
+          new_rent_pcm: number
+          new_start_date: string
+          notes?: string | null
+          proposed_by: string
+          responded_at?: string | null
+          status?: string
+          tenancy_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          new_end_date?: string
+          new_rent_pcm?: number
+          new_start_date?: string
+          notes?: string | null
+          proposed_by?: string
+          responded_at?: string | null
+          status?: string
+          tenancy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "renewal_proposals_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
             referencedColumns: ["id"]
           },
         ]
@@ -1018,6 +1127,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      termination_notices: {
+        Row: {
+          acknowledged_at: string | null
+          created_at: string | null
+          effective_date: string
+          id: string
+          issued_by: string
+          notice_date: string
+          notice_type: string
+          reason: string | null
+          status: string
+          tenancy_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          created_at?: string | null
+          effective_date: string
+          id?: string
+          issued_by: string
+          notice_date?: string
+          notice_type?: string
+          reason?: string | null
+          status?: string
+          tenancy_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          created_at?: string | null
+          effective_date?: string
+          id?: string
+          issued_by?: string
+          notice_date?: string
+          notice_type?: string
+          reason?: string | null
+          status?: string
+          tenancy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "termination_notices_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
