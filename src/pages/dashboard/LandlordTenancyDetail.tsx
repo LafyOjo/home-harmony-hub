@@ -10,10 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { PoundSterling, Zap, MessageSquare, Wrench, FileSignature, Plus, Users } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { PoundSterling, Zap, MessageSquare, Wrench, FileSignature, Plus, Users, RefreshCw, ScrollText, ShieldCheck, Upload, Check } from "lucide-react";
+import { format, parseISO, differenceInDays, addMonths } from "date-fns";
 import { useState } from "react";
 
 export default function LandlordTenancyDetail() {
@@ -158,15 +160,87 @@ export default function LandlordTenancyDetail() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tenancy-maintenance"] }),
   });
 
-  // Add contract
+  // Add contract - enhanced with lease generation and upload
   const [contractOpen, setContractOpen] = useState(false);
   const [contractTitle, setContractTitle] = useState("");
   const [contractType, setContractType] = useState("initial");
   const [contractFrom, setContractFrom] = useState("");
   const [contractTo, setContractTo] = useState("");
+  const [leaseContent, setLeaseContent] = useState("");
+  const [leaseFile, setLeaseFile] = useState<File | null>(null);
+  const [leaseMode, setLeaseMode] = useState<"generate" | "upload">("generate");
+
+  // Landlord e-sign
+  const [landlordSignId, setLandlordSignId] = useState<string | null>(null);
+  const [landlordSigName, setLandlordSigName] = useState("");
+  const [landlordSigConsent, setLandlordSigConsent] = useState(false);
+
+  // Renewal proposal
+  const [renewalOpen, setRenewalOpen] = useState(false);
+  const [renewalRent, setRenewalRent] = useState("");
+  const [renewalStart, setRenewalStart] = useState("");
+  const [renewalEnd, setRenewalEnd] = useState("");
+  const [renewalNotes, setRenewalNotes] = useState("");
+
+  // Termination notice
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [noticeType, setNoticeType] = useState("section_21");
+  const [noticeEffective, setNoticeEffective] = useState("");
+  const [noticeReason, setNoticeReason] = useState("");
+
+  const generateLeaseText = () => {
+    if (!tenancy) return "";
+    const listing = tenancy.listings as any;
+    return `ASSURED SHORTHOLD TENANCY AGREEMENT
+
+This tenancy agreement is made on ${format(new Date(), "d MMMM yyyy")}
+
+PROPERTY: ${listing?.title || ""}
+ADDRESS: ${listing?.address || ""}, ${listing?.postcode || ""}
+
+LANDLORD: [Landlord Name]
+TENANT: [Tenant Name]
+
+TERM: ${contractFrom ? format(parseISO(contractFrom), "d MMMM yyyy") : "[Start Date]"} to ${contractTo ? format(parseISO(contractTo), "d MMMM yyyy") : "[End Date]"}
+
+RENT: £${Number(tenancy.rent_pcm).toLocaleString()} per calendar month, payable in advance on the first day of each month.
+
+DEPOSIT: £${tenancy.deposit ? Number(tenancy.deposit).toLocaleString() : "N/A"}, held in accordance with the Tenancy Deposit Scheme.
+
+OBLIGATIONS OF THE TENANT:
+1. Pay the rent on time and in full.
+2. Keep the property in good condition and report any damage promptly.
+3. Not make any alterations without written consent.
+4. Not sublet or assign the tenancy without written consent.
+5. Allow access for inspections with 24 hours' notice.
+6. Return the property in the same condition at the end of the tenancy.
+
+OBLIGATIONS OF THE LANDLORD:
+1. Maintain the structure and exterior of the property.
+2. Keep installations for gas, water, electricity and sanitation in working order.
+3. Provide a valid EPC, gas safety certificate and deposit protection.
+4. Give proper notice before any inspections or visits.
+
+TERMINATION:
+Either party may terminate this agreement by giving at least two months' written notice, not to end before the fixed term expires.
+
+This agreement is governed by the laws of England and Wales.`;
+  };
 
   const addContractMutation = useMutation({
     mutationFn: async () => {
+      let storageKey: string | null = null;
+      let content = leaseContent;
+
+      if (leaseMode === "upload" && leaseFile) {
+        const key = `${user!.id}/contracts/${Date.now()}-${leaseFile.name}`;
+        const { error: upErr } = await supabase.storage.from("documents").upload(key, leaseFile);
+        if (upErr) throw upErr;
+        storageKey = key;
+      } else if (leaseMode === "generate" && !content) {
+        content = generateLeaseText();
+      }
+
       const { error } = await supabase.from("contracts").insert({
         tenancy_id: id!,
         title: contractTitle,
@@ -174,14 +248,103 @@ export default function LandlordTenancyDetail() {
         valid_from: contractFrom || null,
         valid_to: contractTo || null,
         status: "sent",
-      });
+        storage_key: storageKey,
+        lease_content: content || null,
+        is_uploaded: leaseMode === "upload",
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenancy-contracts"] });
-      toast({ title: "Contract created & sent" });
+      toast({ title: "Contract created & sent to tenant" });
       setContractOpen(false);
+      setContractTitle(""); setLeaseContent(""); setLeaseFile(null);
     },
+  });
+
+  const landlordSignMutation = useMutation({
+    mutationFn: async (contractId: string) => {
+      const contract = contracts?.find(c => c.id === contractId);
+      const newStatus = contract?.tenant_signed_at ? "fully_signed" : "landlord_signed";
+      const { error } = await supabase.from("contracts").update({
+        landlord_signed_at: new Date().toISOString(),
+        landlord_signature_name: landlordSigName,
+        status: newStatus,
+      } as any).eq("id", contractId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenancy-contracts"] });
+      toast({ title: "Contract signed" });
+      setLandlordSignId(null); setLandlordSigName(""); setLandlordSigConsent(false);
+    },
+  });
+
+  // Renewals
+  const { data: renewals } = useQuery({
+    queryKey: ["tenancy-renewals", id],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("renewal_proposals").select("*").eq("tenancy_id", id!).order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: !!id,
+  });
+
+  const addRenewalMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await (supabase as any).from("renewal_proposals").insert({
+        tenancy_id: id!,
+        proposed_by: user!.id,
+        new_rent_pcm: parseFloat(renewalRent),
+        new_start_date: renewalStart,
+        new_end_date: renewalEnd,
+        notes: renewalNotes || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenancy-renewals"] });
+      toast({ title: "Renewal proposal sent" });
+      setRenewalOpen(false); setRenewalRent(""); setRenewalNotes("");
+    },
+  });
+
+  // Termination notices
+  const { data: notices } = useQuery({
+    queryKey: ["tenancy-notices", id],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("termination_notices").select("*").eq("tenancy_id", id!).order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: !!id,
+  });
+
+  const addNoticeMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await (supabase as any).from("termination_notices").insert({
+        tenancy_id: id!,
+        issued_by: user!.id,
+        notice_type: noticeType,
+        effective_date: noticeEffective,
+        reason: noticeReason || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenancy-notices"] });
+      toast({ title: "Notice issued" });
+      setNoticeOpen(false); setNoticeReason("");
+    },
+  });
+
+  // Policy consents view
+  const { data: policyConsents } = useQuery({
+    queryKey: ["tenancy-policy-consents", id],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("policy_consents").select("*").eq("tenancy_id", id!);
+      return data || [];
+    },
+    enabled: !!id,
   });
 
   if (!tenancy) return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
@@ -197,12 +360,14 @@ export default function LandlordTenancyDetail() {
       </motion.div>
 
       <Tabs defaultValue="payments">
-        <TabsList className="grid grid-cols-5 w-full">
-          <TabsTrigger value="payments"><PoundSterling className="w-4 h-4 mr-1" />Rent</TabsTrigger>
-          <TabsTrigger value="utilities"><Zap className="w-4 h-4 mr-1" />Utilities</TabsTrigger>
-          <TabsTrigger value="complaints"><MessageSquare className="w-4 h-4 mr-1" />Complaints</TabsTrigger>
-          <TabsTrigger value="maintenance"><Wrench className="w-4 h-4 mr-1" />Repairs</TabsTrigger>
-          <TabsTrigger value="contracts"><FileSignature className="w-4 h-4 mr-1" />Contracts</TabsTrigger>
+        <TabsList className="grid grid-cols-7 w-full">
+          <TabsTrigger value="payments"><PoundSterling className="w-4 h-4 mr-1 hidden sm:block" />Rent</TabsTrigger>
+          <TabsTrigger value="utilities"><Zap className="w-4 h-4 mr-1 hidden sm:block" />Utilities</TabsTrigger>
+          <TabsTrigger value="complaints"><MessageSquare className="w-4 h-4 mr-1 hidden sm:block" />Complaints</TabsTrigger>
+          <TabsTrigger value="maintenance"><Wrench className="w-4 h-4 mr-1 hidden sm:block" />Repairs</TabsTrigger>
+          <TabsTrigger value="contracts"><FileSignature className="w-4 h-4 mr-1 hidden sm:block" />Leases</TabsTrigger>
+          <TabsTrigger value="renewals"><RefreshCw className="w-4 h-4 mr-1 hidden sm:block" />Renewals</TabsTrigger>
+          <TabsTrigger value="notices"><ScrollText className="w-4 h-4 mr-1 hidden sm:block" />Notices</TabsTrigger>
         </TabsList>
 
         {/* PAYMENTS TAB */}
@@ -307,15 +472,18 @@ export default function LandlordTenancyDetail() {
           {(!maintenance || maintenance.length === 0) && <p className="text-center text-sm text-muted-foreground py-4">No maintenance requests.</p>}
         </TabsContent>
 
-        {/* CONTRACTS TAB */}
+        {/* CONTRACTS / LEASES TAB */}
         <TabsContent value="contracts" className="space-y-4 mt-4">
-          <div className="flex justify-end">
-            <Dialog open={contractOpen} onOpenChange={setContractOpen}>
-              <DialogTrigger asChild><Button size="sm"><Plus className="w-4 h-4 mr-1" />Create Contract</Button></DialogTrigger>
-              <DialogContent>
-                <DialogHeader><DialogTitle>Create Contract</DialogTitle></DialogHeader>
-                <div className="space-y-3 pt-2">
-                  <Input placeholder="Contract title" value={contractTitle} onChange={e => setContractTitle(e.target.value)} />
+          <div className="flex justify-end gap-2">
+            <Dialog open={contractOpen} onOpenChange={o => { setContractOpen(o); if (o) setLeaseContent(generateLeaseText()); }}>
+              <DialogTrigger asChild><Button size="sm"><Plus className="w-4 h-4 mr-1" />Create Lease</Button></DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create Lease Agreement</DialogTitle>
+                  <DialogDescription>Generate from template or upload your own document.</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 pt-2">
+                  <Input placeholder="Lease title" value={contractTitle} onChange={e => setContractTitle(e.target.value)} />
                   <Select value={contractType} onValueChange={setContractType}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -326,25 +494,207 @@ export default function LandlordTenancyDetail() {
                     <Input type="date" placeholder="From" value={contractFrom} onChange={e => setContractFrom(e.target.value)} />
                     <Input type="date" placeholder="To" value={contractTo} onChange={e => setContractTo(e.target.value)} />
                   </div>
-                  <Button className="w-full" onClick={() => addContractMutation.mutate()} disabled={!contractTitle}>Create & Send</Button>
+
+                  {/* Mode toggle */}
+                  <div className="flex gap-2">
+                    <Button type="button" size="sm" variant={leaseMode === "generate" ? "default" : "outline"} onClick={() => { setLeaseMode("generate"); setLeaseContent(generateLeaseText()); }}>
+                      Generate from Template
+                    </Button>
+                    <Button type="button" size="sm" variant={leaseMode === "upload" ? "default" : "outline"} onClick={() => setLeaseMode("upload")}>
+                      <Upload className="w-4 h-4 mr-1" /> Upload Document
+                    </Button>
+                  </div>
+
+                  {leaseMode === "generate" ? (
+                    <Textarea value={leaseContent} onChange={e => setLeaseContent(e.target.value)} rows={14} className="font-mono text-xs" />
+                  ) : (
+                    <label className="cursor-pointer">
+                      <div className="border border-dashed border-border rounded-lg p-4 text-center text-sm text-muted-foreground hover:border-primary/40">
+                        {leaseFile ? leaseFile.name : "Click to upload lease document (PDF, DOCX)"}
+                      </div>
+                      <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={e => setLeaseFile(e.target.files?.[0] || null)} />
+                    </label>
+                  )}
+
+                  <Button className="w-full" onClick={() => addContractMutation.mutate()} disabled={!contractTitle || addContractMutation.isPending}>
+                    {addContractMutation.isPending ? "Creating..." : "Create & Send to Tenant"}
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
           </div>
           {contracts?.map(c => (
             <Card key={c.id} className="p-4">
-              <div className="flex justify-between">
+              <div className="flex justify-between mb-2">
                 <div>
                   <p className="font-medium">{c.title}</p>
                   <p className="text-xs text-muted-foreground capitalize">{c.contract_type} · {c.valid_from && c.valid_to ? `${format(parseISO(c.valid_from), "d MMM yyyy")} – ${format(parseISO(c.valid_to), "d MMM yyyy")}` : "Dates TBC"}</p>
                 </div>
-                <Badge className={c.status === "fully_signed" ? "bg-success text-success-foreground" : "bg-muted text-muted-foreground"}>{c.status.replace("_"," ")}</Badge>
+                <Badge className={c.status === "fully_signed" ? "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" : c.status === "tenant_signed" || c.status === "landlord_signed" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}>
+                  {c.status.replace(/_/g, " ")}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className={c.landlord_signed_at ? "text-emerald-600" : ""}>{c.landlord_signed_at ? `✓ You signed` : "Awaiting your signature"}</span>
+                <span className={c.tenant_signed_at ? "text-emerald-600" : ""}>{c.tenant_signed_at ? `✓ Tenant signed` : "Awaiting tenant"}</span>
+              </div>
+              {!c.landlord_signed_at && (c.status === "sent" || c.status === "tenant_signed") && (
+                <Button size="sm" className="mt-2" onClick={() => setLandlordSignId(c.id)}>
+                  <Check className="w-4 h-4 mr-1" /> Sign as Landlord
+                </Button>
+              )}
+            </Card>
+          ))}
+          {(!contracts || contracts.length === 0) && <p className="text-center text-sm text-muted-foreground py-4">No leases.</p>}
+        </TabsContent>
+
+        {/* RENEWALS TAB */}
+        <TabsContent value="renewals" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Dialog open={renewalOpen} onOpenChange={setRenewalOpen}>
+              <DialogTrigger asChild><Button size="sm"><RefreshCw className="w-4 h-4 mr-1" />Propose Renewal</Button></DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Propose Renewal</DialogTitle></DialogHeader>
+                <div className="space-y-3 pt-2">
+                  <div>
+                    <Label>New Monthly Rent (£)</Label>
+                    <Input type="number" value={renewalRent} onChange={e => setRenewalRent(e.target.value)} placeholder={String(tenancy?.rent_pcm)} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div><Label>New Start</Label><Input type="date" value={renewalStart} onChange={e => setRenewalStart(e.target.value)} /></div>
+                    <div><Label>New End</Label><Input type="date" value={renewalEnd} onChange={e => setRenewalEnd(e.target.value)} /></div>
+                  </div>
+                  <div>
+                    <Label>Notes (optional)</Label>
+                    <Textarea value={renewalNotes} onChange={e => setRenewalNotes(e.target.value)} rows={2} placeholder="Any changes or notes for the tenant..." />
+                  </div>
+                  <Button className="w-full" onClick={() => addRenewalMutation.mutate()} disabled={!renewalRent || !renewalStart || !renewalEnd}>
+                    Send Proposal
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+          {(renewals as any[])?.map((r: any) => (
+            <Card key={r.id} className="p-4">
+              <div className="flex justify-between">
+                <div>
+                  <p className="font-medium">£{r.new_rent_pcm}/mo · {format(parseISO(r.new_start_date), "d MMM yyyy")} – {format(parseISO(r.new_end_date), "d MMM yyyy")}</p>
+                  {r.notes && <p className="text-sm text-muted-foreground mt-1">{r.notes}</p>}
+                </div>
+                <Badge className={r.status === "accepted" ? "bg-emerald-500/15 text-emerald-600" : r.status === "rejected" ? "bg-destructive/15 text-destructive" : "bg-amber-500/15 text-amber-600"}>
+                  {r.status}
+                </Badge>
               </div>
             </Card>
           ))}
-          {(!contracts || contracts.length === 0) && <p className="text-center text-sm text-muted-foreground py-4">No contracts.</p>}
+          {(!renewals || (renewals as any[]).length === 0) && <p className="text-center text-sm text-muted-foreground py-4">No renewal proposals.</p>}
+        </TabsContent>
+
+        {/* NOTICES TAB */}
+        <TabsContent value="notices" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Dialog open={noticeOpen} onOpenChange={setNoticeOpen}>
+              <DialogTrigger asChild><Button size="sm" variant="destructive"><ScrollText className="w-4 h-4 mr-1" />Issue Notice</Button></DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Issue Termination Notice</DialogTitle></DialogHeader>
+                <div className="space-y-3 pt-2">
+                  <div>
+                    <Label>Notice Type</Label>
+                    <Select value={noticeType} onValueChange={setNoticeType}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="section_21">Section 21 (No-fault)</SelectItem>
+                        <SelectItem value="section_8">Section 8 (Grounds-based)</SelectItem>
+                        <SelectItem value="mutual">Mutual Agreement</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Effective Date</Label>
+                    <Input type="date" value={noticeEffective} onChange={e => setNoticeEffective(e.target.value)} />
+                  </div>
+                  <div>
+                    <Label>Reason (optional)</Label>
+                    <Textarea value={noticeReason} onChange={e => setNoticeReason(e.target.value)} rows={2} />
+                  </div>
+                  <Button className="w-full" variant="destructive" onClick={() => addNoticeMutation.mutate()} disabled={!noticeEffective}>
+                    Issue Notice
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+          {(notices as any[])?.map((n: any) => (
+            <Card key={n.id} className="p-4 border-l-4 border-l-destructive">
+              <div className="flex justify-between">
+                <div>
+                  <p className="font-medium capitalize">{n.notice_type.replace(/_/g, " ")} Notice</p>
+                  <p className="text-sm text-muted-foreground">Effective: {format(parseISO(n.effective_date), "d MMM yyyy")}</p>
+                  {n.reason && <p className="text-sm mt-1">{n.reason}</p>}
+                </div>
+                <Badge className={n.status === "acknowledged" ? "bg-muted text-muted-foreground" : "bg-destructive/15 text-destructive"}>
+                  {n.status}
+                </Badge>
+              </div>
+            </Card>
+          ))}
+          {(!notices || (notices as any[]).length === 0) && <p className="text-center text-sm text-muted-foreground py-4">No notices issued.</p>}
+
+          {/* Policy Consents Overview */}
+          <div className="pt-4 border-t border-border">
+            <h3 className="font-display text-md font-semibold mb-3 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-primary" /> Tenant Policy Consents</h3>
+            {(policyConsents as any[])?.length > 0 ? (
+              <div className="space-y-2">
+                {(policyConsents as any[]).map((pc: any) => (
+                  <div key={pc.id} className="flex items-center justify-between bg-card border border-border rounded-lg p-3">
+                    <span className="text-sm capitalize">{pc.policy_type.replace(/_/g, " ")}</span>
+                    <Badge className={pc.consented ? "bg-emerald-500/15 text-emerald-600" : "bg-muted text-muted-foreground"}>
+                      {pc.consented ? `Consented ${pc.consented_at ? format(parseISO(pc.consented_at), "d MMM") : ""}` : "Pending"}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No policy consents recorded yet.</p>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
+
+      {/* Landlord E-Signature Dialog */}
+      <Dialog open={!!landlordSignId} onOpenChange={o => { if (!o) { setLandlordSignId(null); setLandlordSigName(""); setLandlordSigConsent(false); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign as Landlord</DialogTitle>
+            <DialogDescription>Type your full legal name to electronically sign this contract.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <Label>Full Legal Name *</Label>
+              <Input value={landlordSigName} onChange={e => setLandlordSigName(e.target.value)} placeholder="Enter your full legal name" className="font-serif text-lg" />
+              {landlordSigName && (
+                <div className="mt-2 p-3 bg-muted/50 rounded-lg border border-border text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Signature Preview</p>
+                  <p className="font-serif text-2xl italic text-foreground">{landlordSigName}</p>
+                </div>
+              )}
+            </div>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox checked={landlordSigConsent} onCheckedChange={v => setLandlordSigConsent(v === true)} className="mt-0.5" />
+              <span className="text-sm text-muted-foreground">
+                I confirm this electronic signature is legally binding and equivalent to a handwritten signature.
+              </span>
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLandlordSignId(null)}>Cancel</Button>
+            <Button onClick={() => landlordSignId && landlordSignMutation.mutate(landlordSignId)} disabled={!landlordSigName.trim() || !landlordSigConsent || landlordSignMutation.isPending}>
+              {landlordSignMutation.isPending ? "Signing..." : "Sign & Submit"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
