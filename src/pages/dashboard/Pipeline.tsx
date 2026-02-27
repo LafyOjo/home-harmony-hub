@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import ScreeningResults from "@/components/ScreeningResults";
+import LandlordReferenceReview from "@/components/LandlordReferenceReview";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 const columns = [
@@ -100,7 +101,8 @@ export default function Pipeline() {
 
                         {isExpanded && (
                           <div className="space-y-3 pt-2 border-t border-border">
-                            <ScreeningResults applicationId={app.id} canTrigger />
+                             <ScreeningResults applicationId={app.id} canTrigger />
+                             <LandlordReferenceReview applicationId={app.id} />
                             <div className="flex gap-1 flex-wrap">
                               {columns.map(c => c.status !== app.status && (
                                 <Button

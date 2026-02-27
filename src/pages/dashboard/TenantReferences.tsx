@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Clock, CheckCircle2, Mail, ShieldCheck, Eye } from "lucide-react";
+import { Send, Clock, CheckCircle2, Mail, ShieldCheck, Copy, AlertTriangle, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Ref = {
   id: string;
@@ -15,7 +16,9 @@ type Ref = {
   referee_name: string;
   referee_email: string;
   status: string;
+  token: string;
   created_at: string;
+  expires_at: string | null;
 };
 
 type RefResponse = {
@@ -51,7 +54,6 @@ export default function TenantReferences() {
     const refList = (data as Ref[]) || [];
     setRefs(refList);
 
-    // Fetch responses for completed refs
     const completedIds = refList.filter(r => r.status === "completed").map(r => r.id);
     if (completedIds.length > 0) {
       const { data: resps } = await supabase
@@ -69,32 +71,48 @@ export default function TenantReferences() {
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    if (!form.referee_name.trim() || !form.referee_email.trim()) {
+      toast({ title: "All fields are required", variant: "destructive" });
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.from("reference_requests").insert({
       user_id: user.id,
       type: form.type,
-      referee_name: form.referee_name,
-      referee_email: form.referee_email,
+      referee_name: form.referee_name.trim(),
+      referee_email: form.referee_email.trim(),
     });
     setLoading(false);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Reference request sent" });
+      toast({ title: "Reference request created", description: "Share the link with your referee." });
       setForm({ type: "employer", referee_name: "", referee_email: "" });
       fetchRefs();
     }
   };
+
+  const getRefereeLink = (token: string) => `${window.location.origin}/reference/${token}`;
+
+  const copyLink = (token: string) => {
+    navigator.clipboard.writeText(getRefereeLink(token));
+    toast({ title: "Link copied to clipboard" });
+  };
+
+  const isExpired = (ref: Ref) => ref.expires_at && new Date(ref.expires_at) < new Date();
 
   return (
     <div className="max-w-2xl">
       <h1 className="font-display text-2xl font-bold mb-6">References</h1>
 
       <div className="bg-card border border-border rounded-xl p-6 mb-6">
-        <h2 className="font-medium text-sm mb-4">Request a Reference</h2>
+        <h2 className="font-medium text-sm mb-4">Invite a Referee</h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Send a unique link to your referee. They can submit their reference without needing an account. Links expire after 14 days.
+        </p>
         <form onSubmit={handleRequest} className="space-y-3">
           <div>
-            <Label>Type</Label>
+            <Label>Reference Type</Label>
             <Select value={form.type} onValueChange={v => setForm(f => ({ ...f, type: v }))}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -105,26 +123,30 @@ export default function TenantReferences() {
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Referee Name</Label>
-            <Input value={form.referee_name} onChange={e => setForm(f => ({ ...f, referee_name: e.target.value }))} required />
-          </div>
-          <div>
-            <Label>Referee Email</Label>
-            <Input type="email" value={form.referee_email} onChange={e => setForm(f => ({ ...f, referee_email: e.target.value }))} required />
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Referee Name</Label>
+              <Input value={form.referee_name} onChange={e => setForm(f => ({ ...f, referee_name: e.target.value }))} required />
+            </div>
+            <div>
+              <Label>Referee Email</Label>
+              <Input type="email" value={form.referee_email} onChange={e => setForm(f => ({ ...f, referee_email: e.target.value }))} required />
+            </div>
           </div>
           <Button type="submit" disabled={loading} className="gap-2">
-            <Send className="w-4 h-4" /> {loading ? "Sending..." : "Send Request"}
+            <Send className="w-4 h-4" /> {loading ? "Creating…" : "Create & Get Link"}
           </Button>
         </form>
       </div>
 
+      <h2 className="font-medium text-sm mb-3">Your References</h2>
       <div className="space-y-2">
         {refs.length === 0 && <p className="text-sm text-muted-foreground">No references requested yet.</p>}
         {refs.map(ref => {
           const Icon = statusIcons[ref.status] || Clock;
           const resp = responses.get(ref.id);
           const isExpanded = expandedRef === ref.id;
+          const expired = isExpired(ref);
 
           return (
             <div key={ref.id} className="bg-card border border-border rounded-lg overflow-hidden">
@@ -137,21 +159,51 @@ export default function TenantReferences() {
                   <p className="text-sm font-medium">{ref.referee_name}</p>
                   <p className="text-xs text-muted-foreground capitalize">{ref.type} · {ref.referee_email}</p>
                 </div>
-                <Badge variant="secondary" className={statusColors[ref.status] || statusColors.sent}>
-                  {ref.status || "sent"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {expired && ref.status !== "completed" && (
+                    <Tooltip>
+                      <TooltipTrigger><AlertTriangle className="w-4 h-4 text-destructive" /></TooltipTrigger>
+                      <TooltipContent>Link expired</TooltipContent>
+                    </Tooltip>
+                  )}
+                  <Badge variant="secondary" className={statusColors[ref.status] || statusColors.sent}>
+                    {ref.status || "sent"}
+                  </Badge>
+                </div>
               </div>
 
               {isExpanded && (
-                <div className="border-t border-border p-3 bg-muted/20 space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    Requested: {new Date(ref.created_at).toLocaleDateString()}
-                  </p>
+                <div className="border-t border-border p-3 bg-muted/20 space-y-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Requested: {new Date(ref.created_at).toLocaleDateString()}</span>
+                    {ref.expires_at && (
+                      <span className={expired ? "text-destructive" : ""}>
+                        {expired ? "Expired" : `Expires: ${new Date(ref.expires_at).toLocaleDateString()}`}
+                      </span>
+                    )}
+                  </div>
+
+                  {ref.status !== "completed" && !expired && (
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => copyLink(ref.token)}>
+                        <Copy className="w-3 h-3" /> Copy Link
+                      </Button>
+                      <Button size="sm" variant="outline" className="gap-1 text-xs" asChild>
+                        <a href={getRefereeLink(ref.token)} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-3 h-3" /> Preview
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+
                   {ref.status === "completed" && resp ? (
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium text-emerald-600">
                         <ShieldCheck className="w-4 h-4" /> Reference Completed
                       </div>
+                      <p className="text-xs text-muted-foreground">
+                        Submitted: {resp.submitted_at ? new Date(resp.submitted_at).toLocaleDateString() : "—"}
+                      </p>
                       {typeof resp.response_data === "object" && resp.response_data && (
                         <div className="bg-background rounded-lg p-3 space-y-1 text-sm">
                           {Object.entries(resp.response_data).map(([key, value]) => (
@@ -163,11 +215,13 @@ export default function TenantReferences() {
                         </div>
                       )}
                     </div>
-                  ) : (
+                  ) : ref.status !== "completed" && (
                     <p className="text-xs text-muted-foreground">
-                      {ref.status === "opened"
-                        ? "Your referee has opened the reference form but hasn't completed it yet."
-                        : "Waiting for your referee to respond."}
+                      {expired
+                        ? "This link has expired. Create a new reference request."
+                        : ref.status === "opened"
+                          ? "Your referee has opened the form but hasn't completed it yet."
+                          : "Waiting for your referee to respond."}
                     </p>
                   )}
                 </div>

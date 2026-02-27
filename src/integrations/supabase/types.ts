@@ -917,6 +917,7 @@ export type Database = {
       reference_requests: {
         Row: {
           created_at: string | null
+          expires_at: string | null
           id: string
           referee_email: string
           referee_name: string
@@ -927,6 +928,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          expires_at?: string | null
           id?: string
           referee_email: string
           referee_name: string
@@ -937,6 +939,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          expires_at?: string | null
           id?: string
           referee_email?: string
           referee_name?: string
