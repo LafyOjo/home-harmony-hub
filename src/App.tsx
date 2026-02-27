@@ -44,6 +44,7 @@ import ListingPublicDetail from "./pages/ListingPublicDetail";
 import ReferenceSubmit from "./pages/ReferenceSubmit";
 import NewApplication from "./pages/dashboard/NewApplication";
 import NotFound from "./pages/NotFound";
+import { PWAInstallBanner, OfflineBanner } from "./components/PWAInstallBanner";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <OfflineBanner />
+      <PWAInstallBanner />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
