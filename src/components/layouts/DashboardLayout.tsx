@@ -31,6 +31,7 @@ const landlordNav = [
   { to: "/dashboard/tenancies", icon: Users, labelKey: "nav.tenancies" },
   { to: "/dashboard/listings", icon: Building2, labelKey: "nav.listings" },
   { to: "/dashboard/pipeline", icon: List, labelKey: "nav.pipeline" },
+  { to: "/dashboard/landlord-applications", icon: Inbox, labelKey: "nav.applications" },
   { to: "/dashboard/accounting", icon: BarChart3, labelKey: "nav.accounting" },
   { to: "/dashboard/landlord-utilities", icon: Zap, labelKey: "nav.utilities" },
   { to: "/dashboard/landlord-complaints", icon: MessageSquare, labelKey: "nav.complaints" },
