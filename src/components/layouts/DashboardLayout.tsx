@@ -35,6 +35,7 @@ const landlordNav = [
   { to: "/dashboard/landlord-utilities", icon: Zap, labelKey: "nav.utilities" },
   { to: "/dashboard/landlord-complaints", icon: MessageSquare, labelKey: "nav.complaints" },
   { to: "/dashboard/workers", icon: Wrench, labelKey: "nav.workers" },
+  { to: "/dashboard/landlord-maintenance", icon: Wrench, labelKey: "nav.maintenance" },
   { to: "/dashboard/landlord-verification", icon: ShieldCheck, labelKey: "nav.verification" },
 ];
 
