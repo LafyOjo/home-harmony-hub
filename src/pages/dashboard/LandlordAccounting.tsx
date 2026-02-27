@@ -168,6 +168,8 @@ export default function LandlordAccounting() {
     };
   }, [allPayments]);
 
+  const fmtCurrency = (v: number) => `£${v.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
   const exportCSV = () => {
     const headers = "Date,Property,Amount,Status,Late Fee,Payment Method,Reference\n";
     const rows = (allPayments || []).map((p: any) => {
@@ -181,6 +183,22 @@ export default function LandlordAccounting() {
     a.download = `financial-report-${format(new Date(), "yyyy-MM-dd")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const exportPDF = () => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const rows = (allPayments || []).map((p: any) => {
+      const listing = listings?.find(l => l.id === p.tenancies?.listing_id);
+      return `<tr><td>${p.due_date}</td><td>${listing?.title || "—"}</td><td style="text-align:right">${fmtCurrency(Number(p.amount))}</td><td style="text-align:right">${Number((p as any).late_fee || 0) > 0 ? fmtCurrency(Number((p as any).late_fee)) : "—"}</td><td>${p.status}</td><td>${p.payment_method || "—"}</td></tr>`;
+    }).join("");
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>Financial Report</title><style>body{font-family:system-ui;padding:2rem}table{width:100%;border-collapse:collapse;margin-top:1rem}th,td{padding:8px 12px;border-bottom:1px solid #ddd;text-align:left;font-size:13px}th{background:#f5f5f5;font-weight:600}h1{font-size:1.5rem}.stats{display:flex;gap:2rem;margin:1rem 0;flex-wrap:wrap}.stat-label{font-size:12px;color:#666}.stat-val{font-size:1.25rem;font-weight:700}</style></head><body>`);
+    printWindow.document.write(`<h1>Financial Report — All Properties</h1>`);
+    printWindow.document.write(`<div class="stats"><div><div class="stat-label">Total Income</div><div class="stat-val">${fmtCurrency(totalIncome)}</div></div><div><div class="stat-label">Outstanding</div><div class="stat-val">${fmtCurrency(totalOutstanding)}</div></div><div><div class="stat-label">Occupancy</div><div class="stat-val">${occupancyRate}%</div></div><div><div class="stat-label">Projected Annual</div><div class="stat-val">${fmtCurrency(annualProjectedIncome)}</div></div></div>`);
+    printWindow.document.write(`<table><thead><tr><th>Date</th><th>Property</th><th style="text-align:right">Amount</th><th style="text-align:right">Late Fee</th><th>Status</th><th>Method</th></tr></thead><tbody>${rows}</tbody></table>`);
+    printWindow.document.write(`<p style="margin-top:2rem;font-size:11px;color:#999">Generated on ${format(new Date(), "d MMMM yyyy 'at' HH:mm")}</p></body></html>`);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   const chartConfig = {
@@ -210,7 +228,10 @@ export default function LandlordAccounting() {
             ))}
           </div>
           <Button variant="outline" size="sm" onClick={exportCSV}>
-            <Download className="w-3 h-3 mr-1" /> Export CSV
+            <Download className="w-3 h-3 mr-1" /> CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportPDF}>
+            <FileText className="w-3 h-3 mr-1" /> PDF
           </Button>
         </div>
       </motion.div>
