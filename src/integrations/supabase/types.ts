@@ -1311,8 +1311,10 @@ export type Database = {
           created_at: string | null
           due_date: string | null
           id: string
+          meter_reading: number | null
           notes: string | null
           provider_name: string | null
+          receipt_storage_key: string | null
           responsibility: string
           status: string
           tenancy_id: string
@@ -1324,8 +1326,10 @@ export type Database = {
           created_at?: string | null
           due_date?: string | null
           id?: string
+          meter_reading?: number | null
           notes?: string | null
           provider_name?: string | null
+          receipt_storage_key?: string | null
           responsibility?: string
           status?: string
           tenancy_id: string
@@ -1337,8 +1341,10 @@ export type Database = {
           created_at?: string | null
           due_date?: string | null
           id?: string
+          meter_reading?: number | null
           notes?: string | null
           provider_name?: string | null
+          receipt_storage_key?: string | null
           responsibility?: string
           status?: string
           tenancy_id?: string

@@ -30,6 +30,7 @@ import LandlordTenancyDetail from "./pages/dashboard/LandlordTenancyDetail";
 import LandlordWorkers from "./pages/dashboard/LandlordWorkers";
 import LandlordVerification from "./pages/dashboard/LandlordVerification";
 import LandlordAccounting from "./pages/dashboard/LandlordAccounting";
+import LandlordUtilities from "./pages/dashboard/LandlordUtilities";
 import TenantAccounting from "./pages/dashboard/TenantAccounting";
 import Apply from "./pages/Apply";
 import SearchListings from "./pages/SearchListings";
@@ -82,6 +83,7 @@ const App = () => (
             <Route path="/dashboard/workers" element={<P><LandlordWorkers /></P>} />
             <Route path="/dashboard/landlord-verification" element={<P><LandlordVerification /></P>} />
             <Route path="/dashboard/accounting" element={<P><LandlordAccounting /></P>} />
+            <Route path="/dashboard/landlord-utilities" element={<P><LandlordUtilities /></P>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
