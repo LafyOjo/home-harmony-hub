@@ -821,36 +821,45 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_storage_key: string | null
           created_at: string | null
           date_of_birth: string | null
           email: string
           full_name: string | null
           id: string
           move_in_preference: string | null
+          notification_email: boolean
+          notification_sms: boolean
           phone: string | null
           profile_completed: boolean | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          avatar_storage_key?: string | null
           created_at?: string | null
           date_of_birth?: string | null
           email: string
           full_name?: string | null
           id?: string
           move_in_preference?: string | null
+          notification_email?: boolean
+          notification_sms?: boolean
           phone?: string | null
           profile_completed?: boolean | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          avatar_storage_key?: string | null
           created_at?: string | null
           date_of_birth?: string | null
           email?: string
           full_name?: string | null
           id?: string
           move_in_preference?: string | null
+          notification_email?: boolean
+          notification_sms?: boolean
           phone?: string | null
           profile_completed?: boolean | null
           updated_at?: string | null
