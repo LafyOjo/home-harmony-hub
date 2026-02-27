@@ -39,6 +39,7 @@ import TenantAccounting from "./pages/dashboard/TenantAccounting";
 import Apply from "./pages/Apply";
 import SearchListings from "./pages/SearchListings";
 import ListingPublicDetail from "./pages/ListingPublicDetail";
+import ReferenceSubmit from "./pages/ReferenceSubmit";
 import NewApplication from "./pages/dashboard/NewApplication";
 import NotFound from "./pages/NotFound";
 
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/apply/:token" element={<Apply />} />
             <Route path="/listings" element={<SearchListings />} />
             <Route path="/listings/:id" element={<ListingPublicDetail />} />
+            <Route path="/reference/:token" element={<ReferenceSubmit />} />
             {/* Tenant routes */}
             <Route path="/dashboard" element={<P><DashboardHome /></P>} />
             <Route path="/dashboard/profile" element={<P><TenantProfile /></P>} />
