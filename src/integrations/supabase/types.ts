@@ -858,6 +858,53 @@ export type Database = {
         }
         Relationships: []
       }
+      property_policies: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          is_mandatory: boolean
+          listing_id: string
+          owner_id: string
+          policy_type: string
+          title: string
+          updated_at: string | null
+          version: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          is_mandatory?: boolean
+          listing_id: string
+          owner_id: string
+          policy_type: string
+          title: string
+          updated_at?: string | null
+          version?: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          is_mandatory?: boolean
+          listing_id?: string
+          owner_id?: string
+          policy_type?: string
+          title?: string
+          updated_at?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_policies_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reference_requests: {
         Row: {
           created_at: string | null

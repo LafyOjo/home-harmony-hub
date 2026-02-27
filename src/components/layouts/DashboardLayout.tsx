@@ -37,6 +37,7 @@ const landlordNav = [
   { to: "/dashboard/landlord-contracts", icon: FileSignature, labelKey: "nav.contracts" },
   { to: "/dashboard/workers", icon: Wrench, labelKey: "nav.workers" },
   { to: "/dashboard/landlord-maintenance", icon: Wrench, labelKey: "nav.maintenance" },
+  { to: "/dashboard/landlord-policies", icon: ScrollText, labelKey: "nav.policies" },
   { to: "/dashboard/landlord-verification", icon: ShieldCheck, labelKey: "nav.verification" },
 ];
 
