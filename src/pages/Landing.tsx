@@ -148,8 +148,13 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="border-t border-border py-8" role="contentinfo">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          {t("landing.footer")}
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted-foreground">
+          <span>{t("landing.footer")}</span>
+          <div className="flex gap-4">
+            <Link to="/terms" className="hover:text-foreground underline">Terms</Link>
+            <Link to="/privacy" className="hover:text-foreground underline">Privacy</Link>
+            <Link to="/pricing" className="hover:text-foreground underline">Pricing</Link>
+          </div>
         </div>
       </footer>
     </div>

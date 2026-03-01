@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import NotificationBell from "@/components/NotificationBell";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import OnboardingTour from "@/components/OnboardingTour";
 
 const tenantNav = [
   { to: "/dashboard", icon: Home, labelKey: "nav.home" },
@@ -160,6 +161,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <main id="dashboard-content" className="flex-1 p-4 lg:p-8 overflow-auto" role="main">
           {children}
         </main>
+        <OnboardingTour />
       </div>
     </div>
   );
