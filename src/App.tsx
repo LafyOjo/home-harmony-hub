@@ -39,6 +39,7 @@ import LandlordApplications from "./pages/dashboard/LandlordApplications";
 import AdminVerification from "./pages/dashboard/AdminVerification";
 import AdminAnalytics from "./pages/dashboard/AdminAnalytics";
 import TenantAccounting from "./pages/dashboard/TenantAccounting";
+import PrivacySettings from "./pages/dashboard/PrivacySettings";
 import Apply from "./pages/Apply";
 import SearchListings from "./pages/SearchListings";
 import ListingPublicDetail from "./pages/ListingPublicDetail";
@@ -46,6 +47,7 @@ import ReferenceSubmit from "./pages/ReferenceSubmit";
 import NewApplication from "./pages/dashboard/NewApplication";
 import NotFound from "./pages/NotFound";
 import { PWAInstallBanner, OfflineBanner } from "./components/PWAInstallBanner";
+import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +62,7 @@ const App = () => (
       <Sonner />
       <OfflineBanner />
       <PWAInstallBanner />
+      <CookieConsent />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
@@ -85,6 +88,7 @@ const App = () => (
             <Route path="/dashboard/verification" element={<P><TenantVerification /></P>} />
             <Route path="/dashboard/policies" element={<P><TenantPolicies /></P>} />
             <Route path="/dashboard/accounting" element={<P><TenantAccounting /></P>} />
+            <Route path="/dashboard/privacy" element={<P><PrivacySettings /></P>} />
             {/* Landlord routes */}
             <Route path="/dashboard/listings" element={<P><Listings /></P>} />
             <Route path="/dashboard/listings/new" element={<P><NewListing /></P>} />

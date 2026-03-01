@@ -57,10 +57,27 @@ serve(async (req) => {
 
     const listingTitle = (payment.tenancies as any).listings?.title || "Property";
 
+    // Regional payment methods based on currency
+    const paymentMethods: string[] = ["card"];
+    switch (currency) {
+      case "gbp":
+        paymentMethods.push("bacs_debit");
+        break;
+      case "eur":
+        paymentMethods.push("sepa_debit", "ideal", "bancontact", "giropay");
+        break;
+      case "usd":
+        paymentMethods.push("us_bank_account");
+        break;
+      default:
+        // For other currencies, card-only
+        break;
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      payment_method_types: ["card", "bacs_debit"],
+      payment_method_types: paymentMethods as any[],
       line_items: [
         {
           price_data: {
