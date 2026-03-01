@@ -46,6 +46,9 @@ import ListingPublicDetail from "./pages/ListingPublicDetail";
 import ReferenceSubmit from "./pages/ReferenceSubmit";
 import NewApplication from "./pages/dashboard/NewApplication";
 import NotFound from "./pages/NotFound";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import PricingPage from "./pages/Pricing";
 import { PWAInstallBanner, OfflineBanner } from "./components/PWAInstallBanner";
 import CookieConsent from "./components/CookieConsent";
 
@@ -73,6 +76,9 @@ const App = () => (
             <Route path="/listings" element={<SearchListings />} />
             <Route path="/listings/:id" element={<ListingPublicDetail />} />
             <Route path="/reference/:token" element={<ReferenceSubmit />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/pricing" element={<PricingPage />} />
             {/* Tenant routes */}
             <Route path="/dashboard" element={<P><DashboardHome /></P>} />
             <Route path="/dashboard/profile" element={<P><TenantProfile /></P>} />
