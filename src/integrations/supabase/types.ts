@@ -1483,6 +1483,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_listing_owner: {
+        Args: { _listing_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_tenancy_landlord: {
+        Args: { _tenancy_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_tenancy_participant: {
+        Args: { _tenancy_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "tenant" | "landlord" | "agent" | "admin"
