@@ -81,7 +81,9 @@
     "tenancies": "Tenancies",
     "listings": "Listings",
     "pipeline": "Pipeline",
-    "workers": "Workers"
+    "workers": "Workers",
+    "privacy": "Privacy & Data",
+    "analytics": "Analytics"
   },
   "dashboard": {
     "myApplications": "My Applications",

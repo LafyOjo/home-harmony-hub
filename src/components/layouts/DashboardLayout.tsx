@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Home, User, FileText, Send, Inbox, Building2, List, LogOut, Menu, X,
-  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText, BarChart3, LineChart,
+  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText, BarChart3, LineChart, Shield,
 } from "lucide-react";
 import { useState } from "react";
 import NotificationBell from "@/components/NotificationBell";
@@ -24,6 +24,7 @@ const tenantNav = [
   { to: "/dashboard/references", icon: Send, labelKey: "nav.references" },
   { to: "/dashboard/applications", icon: Inbox, labelKey: "nav.applications" },
   { to: "/dashboard/verification", icon: ShieldCheck, labelKey: "nav.verification" },
+  { to: "/dashboard/privacy", icon: Shield, labelKey: "nav.privacy" },
 ];
 
 const landlordNav = [
