@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Home, User, FileText, Send, Inbox, Building2, List, LogOut, Menu, X,
-  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText, BarChart3,
+  PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText, BarChart3, LineChart,
 } from "lucide-react";
 import { useState } from "react";
 import NotificationBell from "@/components/NotificationBell";
@@ -49,7 +49,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const nav = role === "landlord" || role === "agent" ? landlordNav : tenantNav;
+  const adminNav = [
+    { to: "/dashboard/admin/analytics", icon: LineChart, labelKey: "nav.analytics" },
+    { to: "/dashboard/admin/verifications", icon: ShieldCheck, labelKey: "nav.verification" },
+  ];
+
+  const baseNav = role === "landlord" || role === "agent" ? landlordNav : tenantNav;
+  const nav = role === "admin" ? adminNav : baseNav;
 
   const handleSignOut = async () => {
     await signOut();
