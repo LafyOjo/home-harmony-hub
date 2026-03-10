@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Home, User, FileText, Send, Inbox, Building2, List, LogOut, Menu, X,
   PoundSterling, Zap, MessageSquare, Wrench, FileSignature, ShieldCheck, Users, ScrollText, BarChart3, LineChart, Shield,
+  Calendar, Eye,
 } from "lucide-react";
 import { useState } from "react";
 import NotificationBell from "@/components/NotificationBell";
