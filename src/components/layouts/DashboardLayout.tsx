@@ -16,10 +16,12 @@ import OnboardingTour from "@/components/OnboardingTour";
 const tenantNav = [
   { to: "/dashboard", icon: Home, labelKey: "nav.home" },
   { to: "/dashboard/tenancy", icon: PoundSterling, labelKey: "nav.myTenancy" },
+  { to: "/dashboard/viewings", icon: Calendar, labelKey: "nav.viewings" },
   { to: "/dashboard/utilities", icon: Zap, labelKey: "nav.utilities" },
   { to: "/dashboard/complaints", icon: MessageSquare, labelKey: "nav.complaints" },
   { to: "/dashboard/maintenance", icon: Wrench, labelKey: "nav.maintenance" },
   { to: "/dashboard/contracts", icon: FileSignature, labelKey: "nav.contracts" },
+  { to: "/dashboard/deposit", icon: Shield, labelKey: "nav.deposit" },
   { to: "/dashboard/policies", icon: ScrollText, labelKey: "nav.policies" },
   { to: "/dashboard/accounting", icon: BarChart3, labelKey: "nav.accounting" },
   { to: "/dashboard/profile", icon: User, labelKey: "nav.profile" },
