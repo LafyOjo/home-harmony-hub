@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MapPin, Bed, Bath, Car, Trees, Zap, Home, ChevronLeft, ChevronRight } from "lucide-react";
+import BookViewingDialog from "@/components/BookViewingDialog";
 
 type Listing = {
   id: string;
