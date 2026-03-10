@@ -44,7 +44,7 @@ export default function LandlordViewings() {
 
     if (!data) { setLoading(false); return; }
 
-    const tenantIds = [...new Set(data.map((v: any) => v.tenant_id))];
+    const tenantIds = [...new Set(data.map((v: any) => v.tenant_id))] as string[];
     const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, email").in("user_id", tenantIds);
     const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
 
