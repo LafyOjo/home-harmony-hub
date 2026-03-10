@@ -117,6 +117,8 @@ const App = () => (
             <Route path="/dashboard/landlord-maintenance" element={<P><MaintenanceDashboard /></P>} />
             <Route path="/dashboard/landlord-policies" element={<P><LandlordPolicies /></P>} />
             <Route path="/dashboard/landlord-applications" element={<P><LandlordApplications /></P>} />
+            <Route path="/dashboard/landlord-viewings" element={<P><LandlordViewings /></P>} />
+            <Route path="/dashboard/landlord-deposits" element={<P><LandlordDeposits /></P>} />
             {/* Admin routes */}
             <Route path="/dashboard/admin/verifications" element={<P><AdminVerification /></P>} />
             <Route path="/dashboard/admin/analytics" element={<P><AdminAnalytics /></P>} />
