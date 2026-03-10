@@ -98,6 +98,8 @@ const App = () => (
             <Route path="/dashboard/verification" element={<P><TenantVerification /></P>} />
             <Route path="/dashboard/policies" element={<P><TenantPolicies /></P>} />
             <Route path="/dashboard/accounting" element={<P><TenantAccounting /></P>} />
+            <Route path="/dashboard/viewings" element={<P><TenantViewings /></P>} />
+            <Route path="/dashboard/deposit" element={<P><TenantDeposit /></P>} />
             <Route path="/dashboard/privacy" element={<P><PrivacySettings /></P>} />
             {/* Landlord routes */}
             <Route path="/dashboard/listings" element={<P><Listings /></P>} />
