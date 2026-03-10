@@ -194,8 +194,13 @@ export default function ListingPublicDetail() {
               <Button onClick={handleApply} className="w-full mt-6" size="lg">
                 {user ? "Apply Now" : "Create Account to Apply"}
               </Button>
+              {user && (
+                <div className="mt-2">
+                  <BookViewingDialog listingId={listing.id} landlordId={listing.owner_id} listingTitle={listing.title} />
+                </div>
+              )}
               <p className="text-xs text-muted-foreground text-center mt-2">
-                {user ? "Submit your application with documents" : "Sign up free to apply for this property"}
+                {user ? "Submit your application or book a viewing" : "Sign up free to apply for this property"}
               </p>
             </Card>
           </div>
