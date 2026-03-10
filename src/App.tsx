@@ -45,6 +45,10 @@ import SearchListings from "./pages/SearchListings";
 import ListingPublicDetail from "./pages/ListingPublicDetail";
 import ReferenceSubmit from "./pages/ReferenceSubmit";
 import NewApplication from "./pages/dashboard/NewApplication";
+import TenantViewings from "./pages/dashboard/TenantViewings";
+import TenantDeposit from "./pages/dashboard/TenantDeposit";
+import LandlordViewings from "./pages/dashboard/LandlordViewings";
+import LandlordDeposits from "./pages/dashboard/LandlordDeposits";
 import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -94,6 +98,8 @@ const App = () => (
             <Route path="/dashboard/verification" element={<P><TenantVerification /></P>} />
             <Route path="/dashboard/policies" element={<P><TenantPolicies /></P>} />
             <Route path="/dashboard/accounting" element={<P><TenantAccounting /></P>} />
+            <Route path="/dashboard/viewings" element={<P><TenantViewings /></P>} />
+            <Route path="/dashboard/deposit" element={<P><TenantDeposit /></P>} />
             <Route path="/dashboard/privacy" element={<P><PrivacySettings /></P>} />
             {/* Landlord routes */}
             <Route path="/dashboard/listings" element={<P><Listings /></P>} />
@@ -111,6 +117,8 @@ const App = () => (
             <Route path="/dashboard/landlord-maintenance" element={<P><MaintenanceDashboard /></P>} />
             <Route path="/dashboard/landlord-policies" element={<P><LandlordPolicies /></P>} />
             <Route path="/dashboard/landlord-applications" element={<P><LandlordApplications /></P>} />
+            <Route path="/dashboard/landlord-viewings" element={<P><LandlordViewings /></P>} />
+            <Route path="/dashboard/landlord-deposits" element={<P><LandlordDeposits /></P>} />
             {/* Admin routes */}
             <Route path="/dashboard/admin/verifications" element={<P><AdminVerification /></P>} />
             <Route path="/dashboard/admin/analytics" element={<P><AdminAnalytics /></P>} />

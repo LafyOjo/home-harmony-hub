@@ -320,6 +320,77 @@ export type Database = {
           },
         ]
       }
+      deposit_protections: {
+        Row: {
+          certificate_storage_key: string | null
+          created_at: string | null
+          deductions: Json | null
+          deposit_amount: number
+          dispute_raised: boolean | null
+          dispute_reference: string | null
+          id: string
+          prescribed_info_served_at: string | null
+          protected_date: string | null
+          return_amount: number | null
+          return_approved_at: string | null
+          return_reason: string | null
+          return_requested_at: string | null
+          scheme_name: string
+          scheme_reference: string | null
+          status: string
+          tenancy_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          certificate_storage_key?: string | null
+          created_at?: string | null
+          deductions?: Json | null
+          deposit_amount: number
+          dispute_raised?: boolean | null
+          dispute_reference?: string | null
+          id?: string
+          prescribed_info_served_at?: string | null
+          protected_date?: string | null
+          return_amount?: number | null
+          return_approved_at?: string | null
+          return_reason?: string | null
+          return_requested_at?: string | null
+          scheme_name?: string
+          scheme_reference?: string | null
+          status?: string
+          tenancy_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          certificate_storage_key?: string | null
+          created_at?: string | null
+          deductions?: Json | null
+          deposit_amount?: number
+          dispute_raised?: boolean | null
+          dispute_reference?: string | null
+          id?: string
+          prescribed_info_served_at?: string | null
+          protected_date?: string | null
+          return_amount?: number | null
+          return_approved_at?: string | null
+          return_reason?: string | null
+          return_requested_at?: string | null
+          scheme_name?: string
+          scheme_reference?: string | null
+          status?: string
+          tenancy_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deposit_protections_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           category: string
@@ -1461,6 +1532,65 @@ export type Database = {
           verification_type?: string
         }
         Relationships: []
+      }
+      viewing_appointments: {
+        Row: {
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          duration_minutes: number
+          id: string
+          landlord_id: string
+          listing_id: string
+          notes: string | null
+          proposed_datetime: string
+          status: string
+          tenant_id: string
+          updated_at: string | null
+          viewing_type: string
+        }
+        Insert: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          duration_minutes?: number
+          id?: string
+          landlord_id: string
+          listing_id: string
+          notes?: string | null
+          proposed_datetime: string
+          status?: string
+          tenant_id: string
+          updated_at?: string | null
+          viewing_type?: string
+        }
+        Update: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          duration_minutes?: number
+          id?: string
+          landlord_id?: string
+          listing_id?: string
+          notes?: string | null
+          proposed_datetime?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string | null
+          viewing_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "viewing_appointments_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

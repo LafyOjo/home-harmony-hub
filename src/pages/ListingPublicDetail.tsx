@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MapPin, Bed, Bath, Car, Trees, Zap, Home, ChevronLeft, ChevronRight } from "lucide-react";
+import BookViewingDialog from "@/components/BookViewingDialog";
 
 type Listing = {
   id: string;
@@ -23,6 +24,7 @@ type Listing = {
   epc_rating: string | null;
   available_from: string | null;
   description: string | null;
+  owner_id: string;
 };
 
 export default function ListingPublicDetail() {
@@ -40,7 +42,7 @@ export default function ListingPublicDetail() {
     (async () => {
       const { data } = await supabase
         .from("listings")
-        .select("id, title, address, postcode, rent_pcm, deposit, bedrooms, bathrooms, property_type, furnished, parking, garden, epc_rating, available_from, description, floor_plan_key")
+        .select("id, title, address, postcode, rent_pcm, deposit, bedrooms, bathrooms, property_type, furnished, parking, garden, epc_rating, available_from, description, floor_plan_key, owner_id")
         .eq("id", id)
         .eq("is_active", true)
         .single();
@@ -192,8 +194,13 @@ export default function ListingPublicDetail() {
               <Button onClick={handleApply} className="w-full mt-6" size="lg">
                 {user ? "Apply Now" : "Create Account to Apply"}
               </Button>
+              {user && (
+                <div className="mt-2">
+                  <BookViewingDialog listingId={listing.id} landlordId={listing.owner_id} listingTitle={listing.title} />
+                </div>
+              )}
               <p className="text-xs text-muted-foreground text-center mt-2">
-                {user ? "Submit your application with documents" : "Sign up free to apply for this property"}
+                {user ? "Submit your application or book a viewing" : "Sign up free to apply for this property"}
               </p>
             </Card>
           </div>

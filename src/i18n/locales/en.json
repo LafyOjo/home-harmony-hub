@@ -83,7 +83,10 @@
     "pipeline": "Pipeline",
     "workers": "Workers",
     "privacy": "Privacy & Data",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "viewings": "Viewings",
+    "deposit": "Deposit",
+    "deposits": "Deposits"
   },
   "dashboard": {
     "myApplications": "My Applications",
