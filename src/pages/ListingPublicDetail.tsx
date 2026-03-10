@@ -42,7 +42,7 @@ export default function ListingPublicDetail() {
     (async () => {
       const { data } = await supabase
         .from("listings")
-        .select("id, title, address, postcode, rent_pcm, deposit, bedrooms, bathrooms, property_type, furnished, parking, garden, epc_rating, available_from, description, floor_plan_key")
+        .select("id, title, address, postcode, rent_pcm, deposit, bedrooms, bathrooms, property_type, furnished, parking, garden, epc_rating, available_from, description, floor_plan_key, owner_id")
         .eq("id", id)
         .eq("is_active", true)
         .single();
