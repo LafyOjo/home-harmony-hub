@@ -24,6 +24,7 @@ type Listing = {
   epc_rating: string | null;
   available_from: string | null;
   description: string | null;
+  owner_id: string;
 };
 
 export default function ListingPublicDetail() {
