@@ -53,6 +53,7 @@ import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PricingPage from "./pages/Pricing";
+import Demo from "./pages/Demo";
 import { PWAInstallBanner, OfflineBanner } from "./components/PWAInstallBanner";
 import CookieConsent from "./components/CookieConsent";
 
