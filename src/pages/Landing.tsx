@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Shield, FileText, Home, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shield, FileText, Home, ArrowRight, CheckCircle2, LayoutDashboard } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Landing() {
   const { t } = useTranslation();
