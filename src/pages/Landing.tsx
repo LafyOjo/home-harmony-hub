@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function Landing() {
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   const features = [
     { icon: Shield, titleKey: "landing.features.security.title", descKey: "landing.features.security.desc" },
