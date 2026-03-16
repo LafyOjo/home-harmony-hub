@@ -41,12 +41,20 @@ export default function Landing() {
           </Link>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <Link to="/auth/login">
-              <Button variant="ghost" size="sm">{t("common.logIn")}</Button>
-            </Link>
-            <Link to="/auth/register">
-              <Button size="sm">{t("common.getStarted")}</Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button size="sm" className="gap-2"><LayoutDashboard className="w-4 h-4" /> Dashboard</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/auth/login">
+                  <Button variant="ghost" size="sm">{t("common.logIn")}</Button>
+                </Link>
+                <Link to="/auth/register">
+                  <Button size="sm">{t("common.getStarted")}</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>

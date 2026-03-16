@@ -8,7 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, MapPin, Camera, FileImage, Trash2 } from "lucide-react";
+import { Building2, MapPin, Camera, FileImage, Trash2, ShieldCheck, Upload } from "lucide-react";
+
+const OWNERSHIP_DOC_TYPES = [
+  "Title Deed / Land Registry",
+  "Mortgage Statement",
+  "Property Insurance",
+  "Gas Safety Certificate",
+  "EICR (Electrical Certificate)",
+  "EPC Certificate",
+  "DBS/CRB Check",
+  "Landlord Licence",
+];
+
+type OwnerDoc = { file: File; type: string };
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -17,6 +30,7 @@ export default function NewListing() {
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
   const [floorPlan, setFloorPlan] = useState<File | null>(null);
+  const [ownerDocs, setOwnerDocs] = useState<OwnerDoc[]>([]);
   const [form, setForm] = useState({
     title: "",
     address_line_1: "",
@@ -78,8 +92,9 @@ export default function NewListing() {
 
       if (error) throw error;
 
-      // Upload photos
       const listingId = (listing as any).id;
+
+      // Upload photos
       for (let i = 0; i < photos.length; i++) {
         const key = `${user.id}/${listingId}/${Date.now()}-${photos[i].name}`;
         const { error: upErr } = await supabase.storage.from("listing-photos").upload(key, photos[i]);
@@ -91,7 +106,33 @@ export default function NewListing() {
         });
       }
 
-      toast({ title: "Listing created" });
+      // Upload ownership/compliance documents
+      for (const doc of ownerDocs) {
+        const key = `${user.id}/ownership/${listingId}/${Date.now()}-${doc.file.name}`;
+        const { error: upErr } = await supabase.storage.from("documents").upload(key, doc.file);
+        if (upErr) continue;
+        await (supabase as any).from("documents").insert({
+          user_id: user.id,
+          category: doc.type,
+          file_name: doc.file.name,
+          storage_key: key,
+          content_type: doc.file.type,
+          file_size: doc.file.size,
+        });
+      }
+
+      // Auto-create verification request if ownership docs uploaded
+      if (ownerDocs.length > 0) {
+        await supabase.from("verification_requests").insert({
+          user_id: user.id,
+          verification_type: "property_ownership",
+          listing_id: listingId,
+          status: "pending",
+          document_ids: ownerDocs.map(d => d.type),
+        } as any);
+      }
+
+      toast({ title: "Listing created", description: ownerDocs.length > 0 ? "Your ownership documents are under review." : undefined });
       navigate("/dashboard/listings");
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -165,6 +206,50 @@ export default function NewListing() {
                 <input type="file" className="hidden" accept="image/*,.pdf" onChange={e => setFloorPlan(e.target.files?.[0] || null)} />
               </label>
             )}
+          </div>
+        </div>
+
+        {/* Ownership & Compliance Documents */}
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck className="w-5 h-5 text-primary" />
+            <h2 className="font-display text-lg font-semibold">Ownership & Compliance</h2>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Upload documents proving property ownership and compliance (title deed, gas safety, EICR, DBS check, etc.). These will be reviewed for verification.
+          </p>
+
+          {ownerDocs.map((doc, i) => (
+            <div key={i} className="flex items-center justify-between bg-muted/50 border border-border rounded-lg p-3">
+              <div>
+                <p className="text-sm font-medium">{doc.file.name}</p>
+                <p className="text-xs text-muted-foreground">{doc.type}</p>
+              </div>
+              <Button type="button" variant="ghost" size="icon" onClick={() => setOwnerDocs(prev => prev.filter((_, j) => j !== i))}>
+                <Trash2 className="w-4 h-4 text-destructive" />
+              </Button>
+            </div>
+          ))}
+
+          <div className="grid sm:grid-cols-2 gap-2">
+            {OWNERSHIP_DOC_TYPES.map(docType => (
+              <label key={docType} className="cursor-pointer">
+                <div className="flex items-center gap-3 bg-card border border-dashed border-border rounded-lg p-3 hover:border-primary/40 transition-colors">
+                  <Upload className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <span className="text-xs">{docType}</span>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*,.pdf,.doc,.docx"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) setOwnerDocs(prev => [...prev, { file, type: docType }]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            ))}
           </div>
         </div>
 
