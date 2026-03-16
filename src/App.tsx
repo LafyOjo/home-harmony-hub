@@ -53,6 +53,7 @@ import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PricingPage from "./pages/Pricing";
+import Demo from "./pages/Demo";
 import { PWAInstallBanner, OfflineBanner } from "./components/PWAInstallBanner";
 import CookieConsent from "./components/CookieConsent";
 
@@ -83,6 +84,7 @@ const App = () => (
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/demo" element={<Demo />} />
             {/* Tenant routes */}
             <Route path="/dashboard" element={<P><DashboardHome /></P>} />
             <Route path="/dashboard/profile" element={<P><TenantProfile /></P>} />

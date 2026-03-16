@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Bed, Bath, SlidersHorizontal, X, Home } from "lucide-react";
+import { Search, MapPin, Bed, Bath, SlidersHorizontal, X, Home, LayoutDashboard } from "lucide-react";
 
 type ListingResult = {
   id: string;
@@ -28,6 +29,7 @@ type ListingPhoto = {
 };
 
 export default function SearchListings() {
+  const { user } = useAuth();
   const [listings, setListings] = useState<ListingResult[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -103,8 +105,14 @@ export default function SearchListings() {
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="font-display text-xl font-bold text-primary">TenantVault</Link>
           <div className="flex gap-2">
-            <Link to="/auth/login"><Button variant="ghost" size="sm">Sign In</Button></Link>
-            <Link to="/auth/register?role=tenant"><Button size="sm">Create Account</Button></Link>
+            {user ? (
+              <Link to="/dashboard"><Button size="sm" className="gap-2"><LayoutDashboard className="w-4 h-4" /> Dashboard</Button></Link>
+            ) : (
+              <>
+                <Link to="/auth/login"><Button variant="ghost" size="sm">Sign In</Button></Link>
+                <Link to="/auth/register?role=tenant"><Button size="sm">Create Account</Button></Link>
+              </>
+            )}
           </div>
         </div>
       </header>

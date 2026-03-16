@@ -2,11 +2,13 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Shield, FileText, Home, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shield, FileText, Home, ArrowRight, CheckCircle2, LayoutDashboard } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Landing() {
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   const features = [
     { icon: Shield, titleKey: "landing.features.security.title", descKey: "landing.features.security.desc" },
@@ -39,12 +41,20 @@ export default function Landing() {
           </Link>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <Link to="/auth/login">
-              <Button variant="ghost" size="sm">{t("common.logIn")}</Button>
-            </Link>
-            <Link to="/auth/register">
-              <Button size="sm">{t("common.getStarted")}</Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button size="sm" className="gap-2"><LayoutDashboard className="w-4 h-4" /> Dashboard</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/auth/login">
+                  <Button variant="ghost" size="sm">{t("common.logIn")}</Button>
+                </Link>
+                <Link to="/auth/register">
+                  <Button size="sm">{t("common.getStarted")}</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
