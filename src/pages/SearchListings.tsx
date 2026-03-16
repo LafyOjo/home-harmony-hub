@@ -29,6 +29,7 @@ type ListingPhoto = {
 };
 
 export default function SearchListings() {
+  const { user } = useAuth();
   const [listings, setListings] = useState<ListingResult[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
