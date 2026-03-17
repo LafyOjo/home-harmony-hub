@@ -1,8 +1,9 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import RoleSelector from "@/components/RoleSelector";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, role, loading, refreshRole } = useAuth();
 
   if (loading) {
     return (
@@ -13,5 +14,15 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   }
 
   if (!user) return <Navigate to="/auth/login" replace />;
+
+  if (!role) {
+    return (
+      <RoleSelector
+        userId={user.id}
+        onRoleSelected={() => refreshRole()}
+      />
+    );
+  }
+
   return <>{children}</>;
 }
