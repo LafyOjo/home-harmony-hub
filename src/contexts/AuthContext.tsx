@@ -11,6 +11,7 @@ interface AuthContextType {
   role: Role;
   loading: boolean;
   signOut: () => Promise<void>;
+  refreshRole: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
